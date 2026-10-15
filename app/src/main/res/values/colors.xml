@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 图标底色：新 logo 自带宽底并在 background 层铺满，前景层保持透明 -->
+    <color name="ic_launcher_background">#F4F3F6</color>
+    <color name="ic_launcher_transparent">#00000000</color>
+
+    <!-- 冷启动窗口纯色：Bento 软UI 渐变中间色，与首帧画布无缝衔接，无闪色、无首次点击失效 -->
+    <color name="cold_start_solid">#F1F0F4</color>
+</resources>

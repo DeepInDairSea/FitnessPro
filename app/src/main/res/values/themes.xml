@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--
+      真实主题：installSplashScreen() 在 super.onCreate 前把主题从
+      Theme.FitnessPro.Splash 切换到此。windowBackground 用 Bento 软UI
+      渐变中间色纯色，与首帧 Compose 画布无缝衔接，无闪色。
+      不使用 windowIsTranslucent（会导致首次点击 launcher 无反应）。
+    -->
+    <style name="Theme.FitnessPro" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:windowBackground">@drawable/cold_start_background</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">true</item>
+    </style>
+
+    <!--
+      入口 splash 主题：parent 为 core-splashscreen 兼容库的 Theme.SplashScreen。
+      splash 背景用 Bento 同色纯色、图标全透明（不回退 launcher 图标），
+      系统 splash（Android 12+ 平台 / 11 及以下 backport）与主画布同色，
+      视觉上"不存在"。postSplashScreenTheme 指向真实主题，installSplashScreen() 后即切换。
+      不使用 windowIsTranslucent（会导致首次点击 launcher 无反应）。
+      compat 属性（无 android: 前缀）与平台属性成对设置，覆盖新旧两套实现。
+    -->
+    <style name="Theme.FitnessPro.Splash" parent="Theme.SplashScreen">
+        <!-- 注意：splash 背景只接受纯色（@color），塞 drawable 会被系统忽略并回退白屏 -->
+        <!-- 图标用自适应图标（与桌面图标同一资源）：系统层对自适应图标统一做圆形裁切，
+             非自适应 drawable 会被系统做 legacy 八边形处理，与应用内形状不一致 -->
+        <item name="windowSplashScreenBackground">@color/cold_start_splash_color</item>
+        <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher</item>
+        <item name="android:windowSplashScreenBackground">@color/cold_start_splash_color</item>
+        <item name="android:windowSplashScreenAnimatedIcon">@mipmap/ic_launcher</item>
+        <item name="android:windowBackground">@drawable/cold_start_background</item>
+        <item name="postSplashScreenTheme">@style/Theme.FitnessPro</item>
+    </style>
+</resources>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  系统启动画面背景色（日间）：windowSplashScreenBackground 只接受纯色，
+  取 cold_start_background 渐变的中间色 #F1F0F4，与首帧画布视觉一致。
+-->
+<resources>
+    <color name="cold_start_splash_color">#F1F0F4</color>
+</resources>

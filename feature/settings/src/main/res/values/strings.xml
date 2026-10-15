@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_title">设置</string>
+
+    <!-- 分组 -->
+    <string name="settings_group_profile">个人资料</string>
+    <string name="settings_group_units">单位</string>
+    <string name="settings_avatar">头像</string>
+    <string name="settings_avatar_set">已设置，用于分享卡片</string>
+    <string name="settings_avatar_unset">未设置，点击选择图片</string>
+    <string name="settings_avatar_remove">移除头像</string>
+    <string name="settings_nickname">昵称</string>
+    <string name="settings_unset">未设置</string>
+    <string name="settings_age">年龄</string>
+    <string name="settings_age_value">%1$d 岁</string>
+    <string name="settings_age_hint">用于计算基础代谢</string>
+    <string name="settings_gender">性别</string>
+    <string name="settings_gender_male">男</string>
+    <string name="settings_gender_female">女</string>
+    <string name="settings_activity">活动水平</string>
+    <string name="settings_activity_sedentary">久坐</string>
+    <string name="settings_activity_light">轻度</string>
+    <string name="settings_activity_moderate">中度</string>
+    <string name="settings_activity_active">高度</string>
+    <string name="settings_activity_very_active">极高</string>
+    <string name="settings_nickname_unset">未设置，用于分享卡片署名</string>
+    <string name="settings_nickname_hint">怎么称呼你？</string>
+    <string name="settings_group_training">训练</string>
+    <string name="settings_group_display">显示</string>
+    <string name="settings_group_notifications">通知与提醒</string>
+    <string name="settings_group_data">数据</string>
+    <string name="settings_group_privacy">隐私</string>
+    <string name="settings_group_about">关于</string>
+
+    <!-- 单位 -->
+    <string name="settings_weight_unit">重量单位</string>
+    <string name="settings_weight_unit_desc">切换后历史数据会自动换算，但不会改变已记录的实际重量</string>
+    <string name="settings_distance_unit">距离单位</string>
+
+    <!-- 训练 -->
+    <string name="settings_default_rest">默认组间休息</string>
+    <string name="settings_default_rest_value">%1$d 秒</string>
+    <string name="settings_auto_start_rest">完成一组后自动开始休息计时</string>
+    <string name="settings_rest_sound">休息结束提示音</string>
+    <string name="settings_rest_vibration">休息结束震动</string>
+    <string name="settings_rest_tts">语音播报下一组</string>
+    <string name="settings_keep_screen_on">训练中保持屏幕常亮</string>
+    <string name="settings_auto_fill">自动带入上次的重量与次数</string>
+    <string name="settings_auto_fill_desc">关闭后每次都需要手动输入，适合喜欢完全手动控制的用户</string>
+    <string name="settings_weight_step">重量步进</string>
+    <string name="settings_weight_step_value">%1$s %2$s</string>
+    <string name="settings_show_rpe">显示 RPE 输入</string>
+    <string name="settings_include_warmup">热身组计入总容量</string>
+    <string name="settings_include_warmup_desc">默认不计入。开启后热身组会算进训练容量与统计</string>
+    <string name="settings_one_rm_formula">1RM 估算公式</string>
+    <string name="settings_formula_auto">自动（≤6 次用 Brzycki，更多用 Epley）</string>
+    <string name="settings_formula_epley">Epley</string>
+    <string name="settings_formula_brzycki">Brzycki</string>
+    <string name="settings_formula_lombardi">Lombardi</string>
+
+    <!-- 显示 -->
+    <string name="settings_theme">主题</string>
+    <string name="settings_theme_system">跟随系统</string>
+    <string name="settings_theme_light">浅色</string>
+    <string name="settings_theme_dark">深色</string>
+    <string name="settings_theme_preset">主题配色</string>
+    <string name="settings_theme_preset_custom">自定义</string>
+    <string name="settings_theme_preset_vivid_green">生动绿</string>
+    <string name="settings_theme_preset_fresh_green">活力绿</string>
+    <string name="settings_theme_preset_pure_white">极简白</string>
+    <string name="settings_theme_preset_ocean_blue">深海蓝</string>
+    <string name="settings_theme_preset_sunset_orange">活力橙</string>
+    <string name="settings_theme_preset_bento_soft">Bento 软UI</string>
+    <string name="settings_custom_theme_title">自定义主题</string>
+    <string name="settings_custom_theme_desc">点按颜色进行调节，清除后恢复跟随预设</string>
+    <string name="settings_custom_app_bar">标题栏颜色</string>
+    <string name="settings_custom_accent">强调色</string>
+    <string name="settings_custom_content">内容区颜色</string>
+    <string name="settings_custom_other">其他颜色</string>
+    <string name="settings_custom_font">字体颜色</string>
+    <string name="settings_color_hue">色相</string>
+    <string name="settings_color_saturation">饱和度</string>
+    <string name="settings_color_lightness">明度</string>
+    <string name="settings_color_follow_preset">清除（跟随预设）</string>
+    <string name="settings_color_done">确定</string>
+    <string name="settings_first_day_of_week">每周起始日</string>
+    <string name="settings_plan_sort">计划列表排序</string>
+    <string name="settings_sort_recent_edited">最近编辑</string>
+    <string name="settings_sort_recent_performed">最近训练</string>
+    <string name="settings_sort_name">名称</string>
+    <string name="settings_sort_custom">自定义</string>
+
+    <!-- 通知 -->
+    <string name="settings_workout_reminder">训练提醒</string>
+    <string name="settings_workout_reminder_desc">在你设定的日子提醒你去训练</string>
+    <string name="settings_reminder_time">提醒时间</string>
+    <string name="settings_reminder_days">提醒日期</string>
+    <string name="settings_notification_permission_needed">需要通知权限才能收到提醒</string>
+    <string name="settings_notification_grant">去开启</string>
+    <string name="settings_notification_blocked">通知已被系统关闭，点击前往设置</string>
+
+    <!-- 数据 -->
+    <string name="settings_backup">备份与恢复</string>
+    <string name="settings_backup_desc">导出完整备份（含演示文件），或从备份恢复</string>
+    <string name="settings_export_csv">导出训练记录 CSV</string>
+    <string name="settings_export_csv_desc">可在 Excel 或其他健身 App 中打开</string>
+    <string name="settings_media_stats">演示文件占用</string>
+    <string name="settings_media_stats_value">%1$d 个文件 · %2$s</string>
+    <string name="settings_media_scan">重新扫描</string>
+    <string name="settings_media_scanning">扫描中…</string>
+    <string name="settings_media_cleanable">可清理 %1$s</string>
+    <string name="settings_media_clean">清理</string>
+    <string name="settings_media_clean_confirm_title">清理孤立文件？</string>
+    <string name="settings_media_clean_confirm_message">将释放约 %1$s。这些文件已不再被任何计划或动作引用（含回收站中的计划）。</string>
+    <string name="settings_media_cleaned">已释放 %1$s</string>
+    <string name="settings_media_none_cleanable">没有可清理的文件</string>
+    <string name="settings_last_scanned">上次扫描：%1$s</string>
+    <string name="settings_never_scanned">尚未扫描</string>
+    <string name="settings_clear_all">清空所有数据</string>
+    <string name="settings_clear_all_desc">删除全部计划、记录与演示文件，不可恢复</string>
+    <string name="settings_clear_all_confirm_title">确认清空所有数据？</string>
+    <string name="settings_clear_all_confirm_message">此操作不可撤销。请输入 DELETE 以确认。</string>
+    <string name="settings_clear_all_confirm_word">DELETE</string>
+    <string name="settings_clear_all_done">已清空</string>
+
+    <!-- 隐私 -->
+    <string name="settings_privacy_policy">隐私政策</string>
+    <string name="settings_privacy_policy_desc">离线优先：数据只存在本机</string>
+    <string name="settings_disclaimer">免责声明</string>
+    <string name="settings_disclaimer_desc">训练风险与责任免除说明</string>
+    <string name="settings_open_source_desc">MIT License · Copyright (c) 2026 KerryZeng</string>
+    <string name="settings_crash_reporting">发送匿名崩溃报告</string>
+    <string name="settings_crash_reporting_desc">默认关闭。开启后仅发送崩溃堆栈与设备型号，不含任何训练内容</string>
+    <string name="settings_local_first">训练数据仅保存在本机，不会上传到任何服务器</string>
+
+    <!-- 关于 -->
+    <string name="settings_version">版本 %1$s</string>
+    <string name="settings_open_source">开源许可</string>
+    <string name="settings_feedback">问题反馈</string>
+
+    <!-- 无障碍 -->
+    <string name="cd_settings_back">返回</string>
+
+    <!-- 备份与恢复 -->
+    <string name="backup_title">备份与恢复</string>
+    <string name="backup_export_title">导出完整备份</string>
+    <string name="backup_export_desc">包含全部计划、训练记录与演示文件（zip 包）</string>
+    <string name="backup_export_csv_title">导出训练记录 CSV</string>
+    <string name="backup_export_csv_desc">可在 Excel 或其他健身 App 中打开</string>
+    <string name="backup_import_title">从备份恢复</string>
+    <string name="backup_import_desc">选择之前导出的 zip 备份文件</string>
+    <string name="backup_exporting_tables">正在读取数据… %1$d%%</string>
+    <string name="backup_exporting_media">正在打包演示文件… %1$d%%</string>
+    <string name="backup_exporting_finalizing">正在收尾…</string>
+    <string name="backup_export_done">导出完成</string>
+    <string name="backup_export_failed">导出失败：%1$s</string>
+    <string name="backup_csv_done">CSV 已导出</string>
+
+    <string name="backup_preview_title">确认恢复</string>
+    <string name="backup_preview_format">备份格式版本 %1$d</string>
+    <string name="backup_preview_created">导出于 %1$s</string>
+    <string name="backup_preview_app_version">应用版本 %1$s</string>
+    <string name="backup_preview_plans">%1$d 个计划</string>
+    <string name="backup_preview_sessions">%1$d 次训练</string>
+    <string name="backup_preview_sets">%1$d 组记录</string>
+    <string name="backup_preview_media">%1$d 个演示文件（%2$s）</string>
+    <string name="backup_overwrite_warning">恢复会**清空当前的全部数据**后写入备份内容，且无法撤销。</string>
+    <string name="backup_overwrite_confirm_word">请输入 DELETE 确认</string>
+    <string name="backup_import_confirm">清空并恢复</string>
+    <string name="backup_importing">正在恢复…</string>
+    <string name="backup_importing_media">正在还原演示文件…</string>
+    <string name="backup_import_done">恢复完成</string>
+    <string name="backup_import_failed">恢复失败：%1$s</string>
+    <string name="backup_error_version_too_new">该备份由更新版本的应用创建，请先升级应用</string>
+    <string name="backup_error_illegal_path">备份文件包含非法路径，已拒绝导入</string>
+    <string name="backup_error_too_large">备份文件过大，已拒绝导入</string>
+    <string name="backup_error_corrupt">备份文件已损坏或格式不正确</string>
+    <string name="backup_error_broken_reference">备份内容存在无效引用，已拒绝导入</string>
+    <string name="backup_error_unknown">未知错误</string>
+    <string name="backup_tip">建议定期导出备份到网盘，换机时可直接恢复（含演示文件）</string>
+    <string name="wallpaper_group">壁纸</string>
+    <string name="wallpaper_pick">选择壁纸图片</string>
+    <string name="wallpaper_change">更换壁纸</string>
+    <string name="wallpaper_clear">清除壁纸</string>
+    <string name="wallpaper_clear_hint_none">当前未设置壁纸</string>
+    <string name="wallpaper_opacity">壁纸不透明度</string>
+    <string name="wallpaper_none">未设置壁纸</string>
+</resources>

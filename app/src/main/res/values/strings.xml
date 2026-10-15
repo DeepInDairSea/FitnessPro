@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Fitness Pro</string>
+
+    <!-- Health Connect 权限说明页（Android 14+ 要求必须提供） -->
+    <string name="hc_rationale_title">为什么需要读取体重</string>
+    <string name="hc_rationale_body">Fitness Pro 是一个本地优先的训练记录应用。读取体重数据只有一个用途：把你的体重记录同步进"身体数据"页，用于自重动作的容量计算与体重趋势图。数据只保存在你的手机上，不会被上传或分享。</string>
+    <string name="hc_rationale_close">我知道了</string>
+
+    <!-- Onboarding -->
+    <string name="onboarding_title_1">把训练记下来</string>
+    <string name="onboarding_body_1">为每个动作记录组数、次数与重量，自动计算容量、估算 1RM 并检测个人纪录。</string>
+    <string name="onboarding_title_2">本地优先，数据属于你</string>
+    <string name="onboarding_body_2">所有数据只保存在这台手机上。没有账号，没有上传。随时可以一键导出完整备份。</string>
+    <string name="onboarding_title_3">休息计时，不怕切走</string>
+    <string name="onboarding_body_3">组间休息通过系统通知倒计时，切到别的应用、锁屏甚至杀掉应用，计时都不会丢。</string>
+    <string name="onboarding_next">下一步</string>
+    <string name="onboarding_start">开始使用</string>
+    <string name="onboarding_skip">跳过</string>
+    <string name="onboarding_enable_notifications">开启训练通知</string>
+    <string name="onboarding_page_of">第 %1$d 页，共 %2$d 页</string>
+    <!-- 合并页面（训练库 / 数据） -->
+    <string name="library_title">训练库</string>
+    <string name="library_new_plan">新建计划</string>
+    <string name="library_new_exercise">新建动作</string>
+    <string name="segment_plans">计划</string>
+    <string name="segment_exercises">动作</string>
+    <string name="segment_stats">统计</string>
+    <string name="segment_history">历史</string>
+    <string name="data_title">数据</string>
+    <string name="recycle_bin_cd">回收站</string>
+
+    <!-- 今日训练（训练 tab） -->
+    <string name="today_title">今日训练</string>
+    <string name="today_open_library">训练库</string>
+    <string name="today_plans_header">今天练什么</string>
+    <string name="today_empty">今天没有安排</string>
+    <string name="today_empty_hint">休息也是一种训练；或者下面空手开练，想练什么加什么</string>
+    <string name="today_from_weekly">每周排程</string>
+    <string name="today_from_calendar">日历绑定</string>
+    <string name="today_start">开始</string>
+    <string name="today_completed_banner">完成训练！👊GOT IT！👍</string>
+    <string name="today_completed_detail">%1$d 组 · 容量 %2$s kg · 时长 %3$d 分钟</string>
+    <string name="today_day_summary_completed">已完成</string>
+    <string name="today_freestyle_completed_title">自由训练</string>
+    <string name="today_freestyle_completed_source">空手开练 · 已完成</string>
+    <string name="today_freestyle">空手开练</string>
+    <string name="today_week_header">本周排程</string>
+    <string name="today_calendar_entry">训练日历</string>
+    <string name="today_calendar_hint">按日期绑定计划，安排临时调整</string>
+    <string name="today_start_failed">启动失败，请重试</string>
+    <string name="today_active_sets">已完成 %1$d 组</string>
+    <string name="today_continue">继续</string>
+    <!-- 周视图点击展开的训练计划小结 -->
+    <string name="today_day_summary_title">%1$s · 训练计划</string>
+    <string name="today_day_summary_meta">%1$d 个动作 · %2$d 组</string>
+    <string name="today_day_summary_loading">加载中…</string>
+    <string name="today_day_summary_open">打开计划</string>
+
+    <!-- 统一回收站 -->
+    <string name="trash_title_plan">计划回收站</string>
+    <string name="trash_title_exercise">动作回收站</string>
+    <string name="trash_title_history">历史回收站</string>
+    <string name="trash_empty">回收站是空的</string>
+    <string name="trash_days_left">剩余 %1$d 天</string>
+    <string name="trash_restore">恢复</string>
+    <string name="trash_delete_forever">彻底删除</string>
+    <string name="trash_purge_confirm_title">彻底删除「%1$s」？</string>
+    <string name="trash_purge_confirm_message">此操作不可撤销，数据将无法找回。</string>
+    <string name="trash_restored">已恢复</string>
+    <string name="trash_purge_failed">内置动作不能彻底删除，只能恢复</string>
+    <string name="trash_action_failed">操作失败，请重试</string>
+    <string name="trash_builtin">内置动作</string>
+    <string name="trash_custom">自定义动作</string>
+
+    <!-- 壁纸 -->
+</resources>

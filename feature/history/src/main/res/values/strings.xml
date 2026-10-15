@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="session_detail_edit">编辑该组</string>
+    <string name="session_detail_delete">删除该组</string>
+    <string name="session_detail_edit_title">修改训练记录</string>
+    <string name="session_detail_edit_weight">重量（%1$s）</string>
+    <string name="session_detail_edit_reps">次数</string>
+    <string name="session_detail_delete_confirm_title">删除这一组？</string>
+    <string name="session_detail_delete_confirm_message">删除后该组不再计入容量与统计，且无法撤销。</string>
+    <string name="history_mode_list">列表</string>
+    <string name="history_mode_calendar">日历</string>
+    <string name="history_selected_day">当天记录如下，再次点击日期可取消筛选</string>
+    <string name="history_title">训练历史</string>
+    <string name="history_search_hint">搜索计划名或动作名</string>
+    <string name="history_empty">还没有训练记录</string>
+    <string name="history_empty_desc">完成一次训练后，这里会保留每一组的明细</string>
+    <string name="history_no_result">没有找到匹配的记录</string>
+    <string name="history_item_meta">%1$d 个动作 · %2$d 组 · %3$s</string>
+    <string name="history_item_volume">容量 %1$s</string>
+    <string name="history_abandoned">提前结束</string>
+    <string name="history_pr_count">%1$d 项纪录</string>
+    <string name="history_delete">删除记录</string>
+    <string name="history_delete_confirm_title">删除这次训练记录？</string>
+    <string name="history_delete_confirm_message">删除后无法恢复，相关个人纪录也会一并清除。</string>
+    <string name="history_deleted">已删除</string>
+    <string name="history_action_failed">删除失败，记录仍然保留</string>
+
+    <!-- 会话详情 -->
+    <string name="session_detail_title">训练复盘</string>
+    <string name="session_detail_summary">总容量 %1$s · %2$d 组 · %3$d 次</string>
+    <string name="session_detail_paused">其中暂停 %1$s</string>
+    <string name="session_detail_sets_progress">%1$d / %2$d 组</string>
+    <string name="session_detail_target">目标</string>
+    <string name="session_detail_actual">实际</string>
+    <string name="session_detail_set_skipped">跳过</string>
+    <string name="session_detail_set_pending">未完成</string>
+    <string name="session_detail_achieved">达成目标</string>
+    <string name="session_detail_missed">未达目标</string>
+    <string name="session_detail_notes">训练感受</string>
+    <string name="session_detail_rpe">主观强度 RPE %1$d</string>
+    <string name="session_detail_not_found">找不到这次训练的记录</string>
+
+    <!-- 会话详情分享 -->
+    <string name="session_detail_share">分享训练卡片</string>
+    <string name="session_detail_share_saved">卡片已保存到相册</string>
+    <string name="session_detail_share_failed">分享失败，请重试</string>
+    <string name="session_detail_share_only">已发起分享</string>
+    <string name="session_detail_share_repeat_title">已经保存过咯</string>
+    <string name="session_detail_share_repeat_message">这条训练记录的卡片图片已经保存到相册了，再分享一次（不再重复保存）吗？</string>
+</resources>

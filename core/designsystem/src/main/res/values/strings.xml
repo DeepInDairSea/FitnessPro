@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 通用状态 -->
+    <string name="common_retry">重试</string>
+    <string name="common_cancel">取消</string>
+    <string name="common_confirm">确定</string>
+    <string name="common_save">保存</string>
+    <string name="common_delete">删除</string>
+    <string name="common_favorite">收藏</string>
+    <string name="common_unfavorite">取消收藏</string>
+    <string name="common_edit">编辑</string>
+    <string name="common_done">完成</string>
+    <string name="common_close">关闭</string>
+    <string name="common_undo">撤销</string>
+    <string name="common_loading">加载中</string>
+    <string name="common_optional">选填</string>
+    <string name="common_required">必填</string>
+    <string name="common_search_hint">搜索</string>
+    <string name="common_settings">设置</string>
+    <string name="common_exercise_library">动作库</string>
+    <string name="tab_home">首页</string>
+    <string name="tab_training">训练</string>
+    <string name="tab_data">数据</string>
+    <string name="tab_plans">计划</string>
+    <string name="tab_history">历史</string>
+    <string name="tab_stats">统计</string>
+    <string name="tab_body">身体</string>
+    <string name="tab_settings">设置</string>
+    <string name="common_history">历史记录</string>
+    <string name="common_stats">统计</string>
+    <string name="common_body">身体数据</string>
+    <string name="common_back">返回</string>
+    <string name="common_discard">放弃修改</string>
+    <string name="common_keep_editing">继续编辑</string>
+    <string name="common_bytes_mb">%1$d MB</string>
+    <string name="common_percent_value">%1$d%%</string>
+
+    <!-- 图表 -->
+    <string name="chart_legend_no_training">无训练</string>
+    <string name="chart_legend_has_training">有训练</string>
+    <string name="chart_empty">暂无数据</string>
+    <string name="chart_value_kg">%1$s kg</string>
+    <string name="common_empty_default">暂无数据</string>
+    <string name="common_error_default">操作失败，请重试</string>
+    <string name="common_delete_confirm_title">确认删除？</string>
+    <string name="common_delete_confirm_message">删除后 30 天内可在回收站找回。</string>
+
+    <!-- 单位 -->
+    <string name="unit_kg">kg</string>
+    <string name="unit_lb">lb</string>
+    <string name="unit_km">km</string>
+    <string name="unit_mi">mi</string>
+    <string name="unit_seconds">秒</string>
+    <string name="unit_reps">次</string>
+    <string name="unit_minutes_short">%1$d 分钟</string>
+
+    <!-- 动作类型 -->
+    <string name="exercise_type_weight_reps">重量 × 次数</string>
+    <string name="exercise_type_reps_only">仅次数（自重）</string>
+    <string name="exercise_type_weight_time">重量 × 时长</string>
+    <string name="exercise_type_time">仅时长</string>
+    <string name="exercise_type_distance_time">距离 × 时长</string>
+    <string name="exercise_type_weight_distance_time">重量 × 距离 × 时长</string>
+
+    <!-- 肌群 -->
+    <string name="muscle_chest">胸</string>
+    <string name="muscle_upper_chest">上胸</string>
+    <string name="muscle_inner_chest">中缝</string>
+    <string name="muscle_lower_chest">下胸</string>
+    <string name="muscle_back">背</string>
+    <string name="muscle_upper_back">上背</string>
+    <string name="muscle_lower_back">下背</string>
+    <string name="muscle_lats">背阔</string>
+    <string name="muscle_traps">斜方肌</string>
+    <string name="muscle_shoulders">肩</string>
+    <string name="muscle_front_delt">前束</string>
+    <string name="muscle_side_delt">中束</string>
+    <string name="muscle_rear_delt">后束</string>
+    <string name="muscle_biceps">肱二头</string>
+    <string name="muscle_triceps">肱三头</string>
+    <string name="muscle_forearms">前臂</string>
+    <string name="muscle_quads">股四头</string>
+    <string name="muscle_hamstrings">腘绳肌</string>
+    <string name="muscle_glutes">臀</string>
+    <string name="muscle_calves">小腿</string>
+    <string name="muscle_core">核心</string>
+    <string name="muscle_full_body">全身</string>
+    <string name="muscle_cardio">有氧</string>
+    <string name="muscle_neck">颈部</string>
+    <string name="muscle_other">其他</string>
+
+    <!-- 器械（v2 新增） -->
+    <string name="equipment_trx">TRX</string>
+    <string name="equipment_medicine_ball">药球</string>
+    <string name="equipment_battle_rope">战绳</string>
+
+    <!-- 器械 -->
+    <string name="equipment_barbell">杠铃</string>
+    <string name="equipment_dumbbell">哑铃</string>
+    <string name="equipment_machine">固定器械</string>
+    <string name="equipment_cable">绳索</string>
+    <string name="equipment_smith">史密斯机</string>
+    <string name="equipment_ez_bar">EZ 杆</string>
+    <string name="equipment_bodyweight">自重</string>
+    <string name="equipment_kettlebell">壶铃</string>
+    <string name="equipment_band">弹力带</string>
+    <string name="equipment_other">其他</string>
+
+    <!-- 组类型 -->
+    <string name="set_type_normal">正式组</string>
+    <string name="set_type_warmup">热身组</string>
+    <string name="set_type_drop">递减组</string>
+    <string name="set_type_failure">力竭组</string>
+    <string name="set_type_amrap">AMRAP</string>
+
+    <!-- PR 类型 -->
+    <string name="pr_max_weight">单次最大重量</string>
+    <string name="pr_max_reps">最多次数</string>
+    <string name="pr_max_volume_set">单组最大容量（重量 × 次数）</string>
+    <string name="pr_max_e1rm">估算极限重量（1RM）</string>
+    <string name="pr_e1rm_hint">1RM = 按该组重量 × 次数推算的单次极限重量，并非实际完成</string>
+
+    <!-- 无障碍描述 -->
+    <string name="cd_exercise_thumbnail">动作演示缩略图</string>
+    <string name="cd_play_video">播放演示视频</string>
+    <string name="cd_set_completed">该组已完成</string>
+    <string name="cd_set_pending">该组未完成</string>
+    <string name="cd_pr_badge">个人纪录</string>
+</resources>

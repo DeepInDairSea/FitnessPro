@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 夜间暂无独立颜色覆盖；冷启动窗口纯色见 cold_start_solid -->
+    <color name="cold_start_solid">#17161A</color>
+</resources>

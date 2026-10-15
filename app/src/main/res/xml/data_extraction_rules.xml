@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  关键设计（对应 PRD P1-7）：
+  媒体文件与缩略图必须排除在云备份之外。否则用户导入的 200MB 视频会占满
+  Android Auto Backup 的 25MB 配额，导致整个备份失败 —— 连带数据库一起丢失。
+  数据库与偏好仍需备份，保证换机可恢复训练记录。
+-->
+<data-extraction-rules>
+    <cloud-backup>
+        <exclude domain="file" path="media" />
+        <exclude domain="file" path="thumbs" />
+        <exclude domain="file" path="capture" />
+        <exclude domain="external" path="." />
+    </cloud-backup>
+    <device-transfer>
+        <exclude domain="file" path="media" />
+        <exclude domain="file" path="thumbs" />
+        <exclude domain="file" path="capture" />
+        <exclude domain="external" path="." />
+    </device-transfer>
+</data-extraction-rules>

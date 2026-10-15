@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  自适应图标（minSdk 26，因此全平台都走这套配置）。
+
+  设计稿本身就是一个带圆角方形的完整图标（渐变 + 折线 + 字标），
+  所以直接把它放在 background 层铺满，foreground 保持透明即可 ——
+  若把带底的字标图放进 foreground，会被 66/108 的安全区缩成"图标里套图标"。
+
+  单色层（Android 13+ 主题图标）用折线与圆环的矢量轮廓，
+  不带字标：主题图标只有 24dp 左右，字标只会糊成一团。
+-->
+<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+    <background android:drawable="@drawable/ic_launcher_logo" />
+    <foreground android:drawable="@color/ic_launcher_transparent" />
+    <monochrome android:drawable="@drawable/ic_launcher_monochrome" />
+</adaptive-icon>

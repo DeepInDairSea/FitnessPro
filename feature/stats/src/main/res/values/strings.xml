@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="stats_title">统计</string>
+
+    <!-- 概览 -->
+    <string name="stats_overview">概览</string>
+    <string name="stats_week_sessions">本周训练</string>
+    <string name="stats_week_sessions_value">%1$d 次</string>
+    <string name="stats_streak">连续训练</string>
+    <string name="stats_streak_value">%1$d 周</string>
+    <string name="stats_week_volume">本周容量</string>
+    <string name="stats_total_sessions">累计训练</string>
+    <string name="stats_total_sessions_value">%1$d 次</string>
+    <string name="stats_empty_week">本周还没有训练</string>
+
+    <!-- 时间范围 -->
+    <string name="stats_range_30d">1 个月</string>
+    <string name="stats_range_90d">3 个月</string>
+    <string name="stats_range_180d">6 个月</string>
+    <string name="stats_range_all">全部</string>
+
+    <!-- 图表 -->
+    <string name="stats_volume_trend">容量趋势</string>
+    <string name="stats_muscle_distribution">肌群分布</string>
+    <string name="stats_muscle_distribution_desc">按训练容量占比，可切换组数口径</string>
+    <string name="stats_by_volume">按容量</string>
+    <string name="stats_by_sets">按组数</string>
+    <string name="stats_top_exercises">最常练的动作</string>
+    <string name="stats_calendar">训练热力图</string>
+    <string name="stats_pr_list">个人纪录</string>
+    <string name="stats_pr_empty">还没有个人纪录</string>
+    <string name="stats_chart_empty">该时间范围内没有数据</string>
+    <string name="stats_set_count">%1$d 组</string>
+    <string name="stats_session_count">%1$d 次</string>
+</resources>

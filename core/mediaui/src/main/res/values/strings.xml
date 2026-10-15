@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 媒体关联面板（计划与动作共用） -->
+    <string name="media_attach_title">动作演示</string>
+    <string name="media_attach_from_gallery">从相册选择</string>
+    <string name="media_attach_from_gallery_desc">动图或视频，导入时自动压缩以节省空间</string>
+    <string name="media_attach_capture">拍摄视频</string>
+    <string name="media_attach_capture_desc">调用系统相机，无需相机权限</string>
+    <string name="media_attach_from_url">输入视频链接</string>
+    <string name="media_attach_from_url_desc">YouTube / Vimeo / Bilibili 或直链</string>
+    <string name="media_attach_remove">移除演示</string>
+    <string name="media_attach_current">当前：%1$s</string>
+    <string name="media_attach_url_label">视频链接</string>
+    <string name="media_attach_url_error">请输入有效的 http(s) 链接</string>
+    <string name="media_attach_importing">正在导入…</string>
+    <string name="media_attach_importing_percent">正在导入… %1$d%%</string>
+    <string name="media_attach_compressing">正在压缩…</string>
+    <string name="media_attach_done">已关联演示资源</string>
+    <string name="media_attach_failed">导入失败：%1$s</string>
+    <string name="media_attach_too_large_title">文件过大</string>
+    <string name="media_attach_too_large_message">该文件约 %1$d MB，超过 %2$d MB 上限。是否压缩到约 %3$d MB 后导入？</string>
+    <string name="media_attach_compress">压缩后导入</string>
+    <string name="media_attach_url_notice">将跳转到第三方服务，其隐私政策适用</string>
+    <string name="cd_media_attach">动作演示</string>
+
+    <!-- 播放页 -->
+    <string name="media_player_title">演示</string>
+    <string name="media_player_missing">演示文件不存在，可能已被清理</string>
+    <string name="cd_media_player_back">返回</string>
+    <string name="cd_media_orientation">屏幕方向</string>
+    <string name="media_orientation_portrait">竖屏</string>
+    <string name="media_orientation_landscape_left">左横屏</string>
+    <string name="media_orientation_landscape_right">右横屏</string>
+    <string name="media_orientation_system">随系统</string>
+    <string name="cd_media_image">演示图片</string>
+    <string name="media_open_in_browser">在浏览器中打开</string>
+
+    <!-- 媒体展示 -->
+    <string name="cd_exercise_media">动作演示图</string>
+    <string name="cd_media_play">播放演示</string>
+    <string name="media_missing_title">演示文件丢失</string>
+    <string name="media_missing_action">重新关联</string>
+    <string name="media_bind_title">关联演示资源</string>
+    <string name="media_bind_subtitle">为这个动作绑定演示图片或视频</string>
+</resources>

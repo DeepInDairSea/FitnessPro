@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="plans_title">训练计划</string>
+
+    <!-- 训练日历（把计划绑定到具体日期） -->
+    <string name="schedule_title">训练日历</string>
+    <string name="schedule_today">今天</string>
+    <string name="schedule_prev_month">上个月</string>
+    <string name="schedule_next_month">下个月</string>
+    <string name="schedule_bind">绑定计划</string>
+    <string name="schedule_unbind">解绑</string>
+    <string name="schedule_start">开始训练</string>
+    <string name="schedule_day_empty">这天还没有安排。点「绑定计划」把计划放到这一天。</string>
+    <string name="schedule_bind_title">%1$s 训练安排</string>
+    <string name="schedule_freestyle_entry">自由训练</string>
+    <string name="schedule_freestyle_done">已完成</string>
+    <string name="schedule_no_plans">还没有训练计划，先去创建一个。</string>
+    <string name="schedule_weekday_mon">一</string>
+    <string name="schedule_weekday_tue">二</string>
+    <string name="schedule_weekday_wed">三</string>
+    <string name="schedule_weekday_thu">四</string>
+    <string name="schedule_weekday_fri">五</string>
+    <string name="schedule_weekday_sat">六</string>
+    <string name="schedule_weekday_sun">日</string>
+    <string name="plans_search_hint">搜索计划或动作名</string>
+    <string name="plans_create">新建计划</string>
+    <string name="plans_today_title">今日训练</string>
+    <string name="plans_today_start">开始训练</string>
+    <string name="plans_empty_title">还没有训练计划</string>
+    <string name="plans_empty_desc">创建第一个计划，把你想练的动作和组数安排好</string>
+    <string name="plans_empty_action">创建第一个计划</string>
+    <string name="plans_no_result">没有找到匹配的计划</string>
+    <string name="plans_card_meta">%1$d 个动作 · %2$d 组</string>
+    <string name="plans_card_duration">预计 %1$s</string>
+    <string name="plans_card_last_performed">上次：%1$s</string>
+    <string name="plans_card_never_performed">还没练过</string>
+    <string name="plans_favorite_add">加入收藏</string>
+    <string name="plans_favorite_remove">取消收藏</string>
+    <string name="plans_duplicate">复制计划</string>
+    <string name="plans_delete">删除计划</string>
+    <string name="plans_deleted_toast">已移入回收站</string>
+    <string name="plans_delete_title">删除「%1$s」？</string>
+    <string name="plans_delete_message">该计划有 %1$d 个动作</string>
+    <string name="plans_delete_with_media">该计划关联了 %1$d 个演示文件（约 %2$s），删除后可在回收站保留 30 天</string>
+    <string name="plans_trash_title">回收站</string>
+    <string name="plans_trash_empty">回收站是空的</string>
+    <string name="plans_trash_days_left">剩余 %1$d 天</string>
+    <string name="plans_trash_restore">恢复</string>
+    <string name="plans_trash_delete_forever">永久删除</string>
+    <string name="plans_restored">已恢复</string>
+
+    <!-- 详情 -->
+    <string name="plan_detail_exercises">动作清单</string>
+    <string name="plan_detail_empty_exercises">还没有动作</string>
+    <string name="plan_detail_empty_exercises_desc">添加动作后才能开始训练</string>
+    <string name="plan_detail_add_exercise">添加动作</string>
+    <string name="plan_detail_start">开始训练</string>
+    <string name="plan_detail_edit">编辑计划</string>
+<string name="plan_detail_share">分享计划</string>
+<string name="plan_start_mode_last">按上次成绩开始</string>
+<string name="plan_start_mode_targets">按计划处方开始</string>
+<string name="plan_start_mode_blank">空白训练开始</string>
+    <string name="plan_detail_stats">%1$d 个动作 · %2$d 组 · 预计 %3$s</string>
+    <string name="plan_detail_rest">组间休息 %1$d 秒</string>
+    <string name="plan_detail_superset">超级组</string>
+
+    <!-- 编辑 -->
+    <string name="plan_edit_title_new">新建计划</string>
+    <string name="plan_edit_title_edit">编辑计划</string>
+    <string name="plan_edit_name">计划名称</string>
+    <string name="plan_edit_name_error_empty">请输入计划名称</string>
+    <string name="plan_edit_name_error_long">名称不能超过 %1$d 个字符</string>
+    <string name="plan_edit_description">描述</string>
+    <string name="plan_edit_description_hint">这个计划的目标、注意事项…</string>
+    <string name="plan_edit_default_rest">默认组间休息（秒）</string>
+    <string name="plan_edit_focus">当日主要训练部位</string>
+    <string name="plan_edit_focus_hint">自由组合（如 胸+腿），仅作标记，不限制动作选择</string>
+    <string name="plan_edit_schedule">训练日</string>
+    <string name="plan_edit_saving">保存中…</string>
+    <string name="plan_edit_saved">已保存</string>
+    <string name="plans_action_failed">操作失败，请重试</string>
+    <string name="plans_start_failed">没能开始训练，请重试</string>
+    <string name="plan_edit_save">保存</string>
+    <string name="plan_edit_exit_title">要保存本次修改吗？</string>
+    <string name="plan_edit_exit_message">这个计划还没有保存，直接离开会丢失刚才的修改。</string>
+    <string name="plan_edit_exit_save">保存并退出</string>
+    <string name="plan_edit_exit_discard">不保存</string>
+    <string name="plan_edit_continue">继续编辑</string>
+    <string name="plan_edit_target_sets">%1$d 组</string>
+    <string name="plan_edit_target_reps">每组 %1$s 次</string>
+    <string name="plan_edit_move_up">上移</string>
+    <string name="plan_edit_move_down">下移</string>
+    <string name="plan_edit_remove_exercise">移除动作</string>
+    <string name="plan_edit_sets_label">组数</string>
+    <string name="plan_edit_reps_label">每组次数</string>
+    <string name="plan_edit_reps_hint">12 或 8-12</string>
+    <string name="plan_edit_rest_label">休息（秒）</string>
+    <string name="plan_edit_day_format">周%1$s</string>
+    <string name="plan_edit_no_exercises_hint">点击下方"添加动作"开始编排</string>
+
+    <!-- 演示资源 -->
+    <string name="media_attach_title">动作演示</string>
+    <string name="media_attach_from_gallery">从相册选择</string>
+    <string name="media_attach_from_gallery_desc">动图或视频，上限 20MB / 200MB</string>
+    <string name="media_attach_capture">拍摄视频</string>
+    <string name="media_attach_capture_desc">调用系统相机，无需相机权限</string>
+    <string name="media_attach_from_url">输入视频链接</string>
+    <string name="media_attach_from_url_desc">YouTube / Vimeo / Bilibili 或直链</string>
+    <string name="media_attach_remove">移除演示</string>
+    <string name="media_attach_current">当前：%1$s</string>
+    <string name="media_attach_url_label">视频链接</string>
+    <string name="media_attach_url_error">请输入有效的 http(s) 链接</string>
+    <string name="media_attach_importing">正在导入…</string>
+    <string name="media_attach_importing_percent">正在导入… %1$d%%</string>
+    <string name="media_attach_done">已关联演示资源</string>
+    <string name="media_attach_failed">导入失败：%1$s</string>
+    <string name="media_attach_too_large_title">视频过大</string>
+    <string name="media_attach_too_large_message">该视频约 %1$d MB，超过 %2$d MB 上限。是否压缩到约 %3$d MB 后导入？</string>
+    <string name="media_attach_compress">压缩后导入</string>
+    <string name="media_attach_url_notice">将跳转到第三方服务，其隐私政策适用</string>
+    <string name="cd_media_attach">动作演示</string>
+</resources>

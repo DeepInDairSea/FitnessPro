@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="body_title">身体数据</string>
+    <string name="body_today">今日记录</string>
+    <string name="body_weight">体重（kg）</string>
+    <string name="body_weight_required">请输入体重</string>
+    <string name="body_weight_range_error">请输入 20–400 之间的体重</string>
+    <string name="body_fat">体脂率（%）</string>
+    <string name="body_muscle_mass">骨骼肌量（kg）</string>
+    <string name="body_height">身高（cm）</string>
+    <string name="body_visceral_fat">内脏脂肪等级</string>
+    <string name="body_trend_metric">趋势指标</string>
+    <string name="body_metric_weight">体重</string>
+    <string name="body_metric_body_fat">体脂</string>
+    <string name="body_metric_muscle">肌肉量</string>
+    <string name="body_metric_height">身高</string>
+    <string name="body_metric_visceral">内脏脂肪</string>
+    <string name="body_chest">胸围（cm）</string>
+    <string name="body_waist">腰围（cm）</string>
+    <string name="body_hip">臀围（cm）</string>
+    <string name="body_arm">臂围（cm）</string>
+    <string name="body_thigh">腿围（cm）</string>
+    <string name="body_calf">小腿围（cm）</string>
+    <string name="body_metric_bmr">基础代谢</string>
+    <string name="body_save">保存今日记录</string>
+    <string name="body_saved">已保存</string>
+    <string name="body_more_metrics">更多指标</string>
+    <string name="body_less_metrics">收起</string>
+    <string name="body_trend">数据趋势</string>
+    <string name="body_trend_empty">记录两次以上就能看到趋势</string>
+    <string name="body_history">历史记录</string>
+
+    <!-- 饮食与代谢 -->
+    <string name="body_diet_title">饮食与代谢</string>
+    <string name="body_diet_need_profile">在设置中补全 年龄 / 性别 / 活动水平，并记录一次身高体重后，即可计算基础代谢与热量盈亏</string>
+    <string name="body_diet_intake">今日摄入</string>
+    <string name="body_diet_vs_tdee">对照每日消耗</string>
+    <string name="body_diet_protein">蛋白质</string>
+    <string name="body_diet_fat">脂肪</string>
+    <string name="body_diet_carb">碳水</string>
+    <string name="body_diet_record">记录饮食</string>
+
+    <!-- 饮食记录页 -->
+    <string name="diet_title">记录饮食</string>
+    <string name="diet_search_hint">搜索食物</string>
+    <string name="diet_all">全部</string>
+    <string name="diet_per_50g">每 50g</string>
+    <string name="diet_grams_hint">摄入克数</string>
+    <string name="diet_grams_default">100</string>
+    <string name="diet_preset_50">50g</string>
+    <string name="diet_preset_100">100g</string>
+    <string name="diet_preset_150">150g</string>
+    <string name="diet_preset_200">200g</string>
+    <string name="diet_egg_note">一个鸡蛋约 50g；一个蛋白约 33g，一个蛋黄约 16g</string>
+    <string name="diet_recorded">已记录</string>
+    <string name="diet_category_supplement">蛋白补剂</string>
+    <string name="diet_scoop_half">半勺</string>
+    <string name="diet_scoop_one">一勺</string>
+    <string name="diet_scoop_one_half">一勺半</string>
+    <string name="diet_add">记录</string>
+    <string name="body_history_empty">还没有身体数据</string>
+    <string name="body_history_empty_desc">记录体重后，训练量变化才有参照</string>
+    <string name="body_delete">删除</string>
+    <string name="body_delete_confirm_message">这条身体记录将被永久删除，无法恢复。</string>
+    <string name="body_deleted">已删除</string>
+    <string name="body_sync_from_health">从 Health Connect 同步体重</string>
+    <string name="body_overwrite_hint">同一天重复记录会覆盖当天数据</string>
+    <string name="body_weight_used_hint">体重用于自重动作（引体向上、俯卧撑）的容量计算</string>
+    <string name="body_delta_up">比上次 +%1$s kg</string>
+    <string name="body_delta_down">比上次 %1$s kg</string>
+    <string name="body_delta_same">与上次持平</string>
+</resources>

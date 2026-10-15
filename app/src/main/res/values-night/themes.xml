@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 夜间真实主题：windowBackground 用 Bento 深色渐变中间色纯色，与首帧画布同色。 -->
+    <style name="Theme.FitnessPro" parent="android:Theme.Material.NoActionBar">
+        <item name="android:windowBackground">@drawable/cold_start_background</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">false</item>
+    </style>
+</resources>

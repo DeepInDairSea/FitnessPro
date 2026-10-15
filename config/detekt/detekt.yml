@@ -1,0 +1,22 @@
+# Detekt 配置（基线）。CI 上通过 `./gradlew detekt` 执行；
+# 本地默认不强制（见根 build.gradle.kts 的 CI 门控），避免拖慢日常构建。
+build:
+  maxIssues: 0
+
+style:
+  MagicNumber:
+    ignoreNumbers: ['-1', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '12', '24', '30', '60', '100', '1000', '1024']
+  MaxLineLength:
+    maxLineLength: 140
+  WildcardImport:
+    active: false
+
+complexity:
+  LongMethod:
+    threshold: 90
+  TooManyFunctions:
+    thresholdInFiles: 40
+
+naming:
+  FunctionNaming:
+    ignoreAnnotated: ['Composable']

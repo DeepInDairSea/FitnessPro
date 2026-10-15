@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  冷启动窗口背景（日间）：与 Bento 软UI appBackground 渐变逐像素一致
+  （Theme.kt: verticalGradient #F6F5F8→#F1F0F4→#EAE9EF）。
+  splash 保持到首帧 ready，窗口背景与首帧画布同渐变，无缝衔接。
+-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <gradient
+        android:angle="270"
+        android:startColor="#F6F5F8"
+        android:centerColor="#F1F0F4"
+        android:endColor="#EAE9EF"
+        android:type="linear" />
+</shape>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  FileProvider 暴露路径。
+
+  安全约束：**只暴露 cache 下确需跨进程共享的子目录**，绝不暴露整个 cacheDir 或 filesDir
+  —— 那会让任何拿到 URI 的第三方应用读到用户的全部训练数据与演示文件。
+
+  capture/ —— 系统相机拍照的临时输出。导入成功后立刻移到 filesDir/media/ 并清空该目录。
+-->
+<paths>
+    <cache-path
+        name="capture"
+        path="capture/" />
+    <!-- 训练分享卡片 PNG -->
+    <cache-path
+        name="share"
+        path="share/" />
+</paths>

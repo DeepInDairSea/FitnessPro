@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  冷启动窗口背景（夜间）：与 Bento 软UI 深色 appBackground 渐变一致
+  （Theme.kt: verticalGradient #191820→#17161A→#131217）。
+-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <gradient
+        android:angle="270"
+        android:startColor="#191820"
+        android:centerColor="#17161A"
+        android:endColor="#131217"
+        android:type="linear" />
+</shape>

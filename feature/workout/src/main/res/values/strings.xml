@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 通知渠道 -->
+    <string name="channel_rest_running_name">休息倒计时</string>
+    <string name="channel_rest_running_desc">显示组间休息的倒计时，静默不打扰</string>
+    <string name="channel_rest_finished_name">休息结束提醒</string>
+    <string name="channel_rest_finished_desc">休息结束时震动或提示音</string>
+    <string name="channel_reminder_name">训练提醒</string>
+    <string name="channel_reminder_desc">按你设置的星期提醒开始训练</string>
+    <string name="channel_pr_name">个人纪录</string>
+    <string name="channel_pr_desc">达成新的个人纪录时提醒</string>
+    <string name="channel_inactivity_name">久未训练</string>
+    <string name="channel_inactivity_desc">一段时间没有训练时提醒</string>
+    <string name="channel_body_reminder_name">体重记录提醒</string>
+    <string name="channel_body_reminder_desc">每周提醒记录体重</string>
+    <string name="channel_media_cleanup_name">存储清理建议</string>
+    <string name="channel_media_cleanup_desc">可清理的孤立文件时提醒</string>
+
+    <!-- 退出训练确认 -->
+    <string name="workout_exit_title">退出训练？</string>
+    <string name="workout_exit_message">本次训练进度已自动保存。选择「保存并退出」可稍后继续；选择「不保存」将移入回收站，需要时可恢复并继续训练。</string>
+    <string name="workout_exit_cancel">取消</string>
+    <string name="workout_exit_save">保存并退出</string>
+    <string name="workout_exit_discard">不保存</string>
+    <string name="summary_share">分享训练卡片</string>
+    <string name="summary_share_disclaimer_title">保存到相册</string>
+    <string name="summary_share_disclaimer">分享的卡片图片将保存到本机相册（Pictures/FitnessPro）。本应用为纯离线应用，图片仅存储在本地，不会上传或下载到任何数据中心。</string>
+    <string name="summary_share_repeat_title">已经保存过咯</string>
+    <string name="summary_share_repeat_message">这条训练记录的卡片图片已经保存到相册了，再分享一次（不再重复保存）吗？</string>
+    <string name="summary_saved_toast">已保存到相册</string>
+    <string name="summary_save_failed_toast">保存失败，请重试</string>
+    <string name="summary_shared_only_toast">已发起分享</string>
+    <string name="reminder_title">该训练了</string>
+    <string name="reminder_text">今天的计划在等你，点这里开始</string>
+    <!-- 吉祥物提醒文案：到点随机抽一条，让提醒有点人味儿 -->
+    <string-array name="reminder_messages">
+        <item>咕咕——小鸟把哑铃都擦好了，就差你啦 🐦</item>
+        <item>今天的你在等一个变强的机会，练一把？💪</item>
+        <item>小鸟说：练完这组给你唱歌听 🎵</item>
+        <item>肌肉不会自己长，但小鸟会一直等你 🐣</item>
+        <item>该运动啦！小鸟已经在垫子上占好位置了 🏋️</item>
+        <item>咕咕！再来一次冲刺，本周目标就稳了 🔥</item>
+    </string-array>
+
+    <!-- 休息计时 -->
+    <string name="rest_timer_title">组间休息</string>
+    <string name="rest_timer_remaining_format">剩余 %1$d:%2$02d</string>
+    <string name="rest_timer_paused">已暂停</string>
+    <string name="rest_finished_title">休息结束，开始下一组</string>
+    <string name="rest_finished_next_set_hint">下一组 %1$s</string>
+    <string name="rest_skip">跳过休息</string>
+    <string name="rest_add_30s">+30 秒</string>
+    <string name="rest_pause">暂停</string>
+    <string name="rest_resume">继续</string>
+    <string name="rest_minus_15s">-15 秒</string>
+    <string name="rest_add_15s">+15 秒</string>
+
+    <!-- 训练页 -->
+    <string name="workout_title">训练中</string>
+    <string name="workout_free_training">自由训练</string>
+    <string name="workout_finish">结束训练</string>
+    <string name="workout_pause">暂停</string>
+    <string name="workout_resume">继续训练</string>
+    <string name="workout_paused_banner">训练已暂停</string>
+    <string name="workout_elapsed">已用时间</string>
+    <string name="workout_volume">总容量</string>
+    <string name="workout_progress">%1$d / %2$d 组</string>
+    <string name="workout_target_sets">目标 %1$d 组</string>
+    <string name="workout_rest_seconds">组间休息 %1$d 秒</string>
+    <string name="workout_last_time">上次：%1$s</string>
+    <string name="workout_no_history">首次记录该动作</string>
+    <string name="workout_complete_set">完成一组</string>
+    <string name="workout_skip_set">跳过本组</string>
+    <string name="workout_add_set">加一组</string>
+    <string name="workout_more_actions">更多操作</string>
+    <string name="workout_exercise_done">完成目标！Got it! 👊</string>
+    <string name="workout_expand">展开动作</string>
+    <string name="workout_collapse">收起动作</string>
+    <string name="workout_duplicate_set">复制一组</string>
+    <string name="workout_delete_set">删除末组</string>
+    <string name="workout_skip_exercise">跳过本动作</string>
+    <string name="workout_replace_exercise">替换动作</string>
+    <string name="workout_add_exercise">添加动作</string>
+    <string name="workout_set_label">第 %1$d 组</string>
+    <string name="workout_weight_label">重量</string>
+    <string name="workout_reps_label">次数</string>
+    <string name="workout_duration_label">时长（秒）</string>
+    <string name="workout_distance_label">距离（米）</string>
+    <string name="workout_rpe_label">RPE</string>
+    <string name="workout_left_label">左</string>
+    <string name="workout_right_label">右</string>
+    <string name="workout_notes_hint">备注</string>
+    <string name="workout_no_exercises">本次训练还没有动作</string>
+    <string name="workout_no_exercises_desc">从动作库添加，或先结束训练</string>
+    <string name="workout_suggestion_increase">建议加重到 %1$s</string>
+    <string name="workout_suggestion_keep">建议维持 %1$s</string>
+    <string name="workout_suggestion_deload">连续未达标，建议减重到 %1$s</string>
+    <string name="workout_pr_celebration_title">新纪录！</string>
+    <string name="workout_pr_celebration_detail">%1$s %2$s</string>
+    <string name="workout_resume_dialog_title">发现未完成的训练</string>
+    <string name="workout_resume_dialog_message">「%1$s」还在进行中，是否继续？</string>
+    <string name="workout_resume_continue">继续训练</string>
+    <string name="workout_resume_abandon">放弃并新建</string>
+
+    <!-- 结束与总结 -->
+    <string name="workout_finish_incomplete_title">还有未完成的组</string>
+    <string name="workout_finish_incomplete_message">还有 %1$d 组未完成，标记为跳过并结束？</string>
+    <string name="summary_title">训练总结</string>
+    <string name="summary_duration">训练时长</string>
+    <string name="summary_volume">总容量</string>
+    <string name="summary_sets">完成组数</string>
+    <string name="summary_reps">总次数</string>
+    <string name="summary_pr_section">本次新纪录</string>
+    <string name="summary_no_pr">本次没有刷新纪录，继续保持</string>
+    <string name="summary_notes_hint">今天感觉如何？</string>
+    <string name="summary_effort">主观强度 RPE</string>
+    <string name="summary_done">完成</string>
+    <string name="summary_pr_format">%1$s %2$s</string>
+
+    <!-- 动作选择器（训练中） -->
+    <string name="picker_title">选择动作</string>
+
+    <!-- 媒体播放 -->
+    <string name="player_title">动作演示</string>
+    <string name="player_speed">倍速</string>
+    <string name="player_step_back">后退一帧</string>
+    <string name="player_step_forward">前进一帧</string>
+    <string name="player_loop">循环播放</string>
+    <string name="player_external_hint">该链接将在系统浏览器中打开</string>
+    <string name="player_open_external">在浏览器中打开</string>
+    <string name="player_missing_file">演示文件已丢失，请重新关联</string>
+    <string name="player_missing_file_action">重新关联</string>
+
+    <!-- 训练总结 -->
+    <string name="summary_compare_title">与上次对比</string>
+    <string name="summary_volume_delta_up">容量比上次多 %1$s</string>
+    <string name="summary_volume_delta_down">容量比上次少 %1$s</string>
+    <string name="summary_volume_delta_same">容量与上次持平</string>
+    <string name="summary_first_time">这是第一次练这个计划</string>
+    <string name="summary_saved">训练已保存</string>
+    <string name="summary_saving">保存中…</string>
+    <string name="summary_exit_title">备注还没保存</string>
+    <string name="summary_exit_message">你改了主观强度或备注，直接离开会丢失这些内容。</string>
+    <string name="summary_exit_save">保存并离开</string>
+    <string name="summary_exit_discard">不保存</string>
+    <string name="summary_exit_stay">继续编辑</string>
+
+    <string name="summary_pr_value_weight">%1$s kg</string>
+    <string name="summary_pr_value_reps">%1$d 次</string>
+    <string name="summary_pr_value_volume">%1$s kg</string>
+
+    <!-- 媒体播放 -->
+    <string name="player_error">无法播放该演示资源</string>
+    <string name="player_retry">重试</string>
+    <string name="player_speed_value">%1$sx</string>
+    <string name="player_frame_step">±0.1 秒</string>
+</resources>

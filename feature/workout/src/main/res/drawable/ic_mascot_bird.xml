@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  应用吉祥物：训练小鸟（原创形象，多邻国风格的友好吉祥物位）。
+  用于训练提醒通知的大图 / 展开图，仅在本模块使用。
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="240dp"
+    android:height="240dp"
+    android:viewportWidth="240"
+    android:viewportHeight="240">
+
+    <!-- 头顶呆毛 -->
+    <path
+        android:fillColor="#D84E26"
+        android:pathData="M112,50 a8,8 0 0 1 16,0 a8,8 0 0 1 -16,0 Z" />
+    <path
+        android:fillColor="#D84E26"
+        android:pathData="M124,42 a8,8 0 0 1 16,0 a8,8 0 0 1 -16,0 Z" />
+
+    <!-- 身体 -->
+    <path
+        android:fillColor="#F0653C"
+        android:pathData="M120,54 a78,78 0 1 1 -0.01,0 Z" />
+
+    <!-- 肚皮 -->
+    <path
+        android:fillColor="#F79C79"
+        android:pathData="M120,134 a46,34 0 1 0 0.01,0 Z" />
+
+    <!-- 左右翅膀 -->
+    <path
+        android:fillColor="#D84E26"
+        android:pivotX="48"
+        android:pivotY="140"
+        android:rotation="18"
+        android:pathData="M48,108 a16,30 0 1 0 0.01,0 Z" />
+    <path
+        android:fillColor="#D84E26"
+        android:pivotX="192"
+        android:pivotY="140"
+        android:rotation="-18"
+        android:pathData="M192,108 a16,30 0 1 0 0.01,0 Z" />
+
+    <!-- 眼睛 -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M98,88 a20,20 0 1 0 0.01,0 Z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M146,88 a20,20 0 1 0 0.01,0 Z" />
+    <path
+        android:fillColor="#1B1A1F"
+        android:pathData="M101,90 a9,9 0 1 0 0.01,0 Z" />
+    <path
+        android:fillColor="#1B1A1F"
+        android:pathData="M143,90 a9,9 0 1 0 0.01,0 Z" />
+    <!-- 眼里的小高光 -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M104,85 a3,3 0 1 0 0.01,0 Z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M146,85 a3,3 0 1 0 0.01,0 Z" />
+
+    <!-- 腮红 -->
+    <path
+        android:fillColor="#F08BB0"
+        android:pathData="M78,130 a8,8 0 1 0 0.01,0 Z" />
+    <path
+        android:fillColor="#F08BB0"
+        android:pathData="M162,130 a8,8 0 1 0 0.01,0 Z" />
+
+    <!-- 喙 -->
+    <path
+        android:fillColor="#F0B429"
+        android:pathData="M110,120 L130,120 L120,136 Z" />
+
+    <!-- 小脚 -->
+    <path
+        android:fillColor="#C98E1B"
+        android:pathData="M100,206 h16 a4,4 0 0 1 0,10 h-16 a4,4 0 0 1 0,-10 Z" />
+    <path
+        android:fillColor="#C98E1B"
+        android:pathData="M124,206 h16 a4,4 0 0 1 0,10 h-16 a4,4 0 0 1 0,-10 Z" />
+</vector>

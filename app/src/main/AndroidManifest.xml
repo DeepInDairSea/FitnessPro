@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!--
+      权限清单已在需求评审中收敛为最小集合（ADR-05 / ADR-06 / ADR-15）。
+      明确不声明：
+        CAMERA                        —— 拍摄走系统相机 Intent，不需要该权限
+        READ_MEDIA_*                  —— 相册选择走 Photo Picker / SAF，主路径零存储权限
+        READ_EXTERNAL_STORAGE         —— 同上
+        FOREGROUND_SERVICE* / WAKE_LOCK —— 休息计时不使用前台服务
+        SCHEDULE_EXACT_ALARM          —— 休息计时使用无需权限的 setAndAllowWhileIdle
+        MANAGE_EXTERNAL_STORAGE       —— 商店政策禁止
+        QUERY_ALL_PACKAGES            —— 无必要
+    -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <!--
+      分享卡片"保存到相册"：Android 10+ 走 MediaStore 无需权限；
+      仅 9 及以下需要运行时存储权限（maxSdkVersion 28 限定，不影响商店审核口径）。
+    -->
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="28"
+        tools:ignore="ScopedStorage" />
+
+    <!--
+      Health Connect：只读体重（DEV 文档 §11.1 的能力收敛）。
+      不声明 WRITE_EXERCISE / WRITE_CALORIES —— 写训练会话的价值配不上它的隐私成本。
+    -->
+    <uses-permission android:name="android.permission.health.READ_WEIGHT" />
+
+    <application
+        android:name=".FitnessProApplication"
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.FitnessPro"
+        tools:targetApi="36">
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:windowSoftInputMode="adjustResize"
+            android:theme="@style/Theme.FitnessPro.Splash">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- 休息计时到点提醒：由 AlarmManager 唤起，不需要前台服务 -->
+        <receiver
+            android:name="com.fitnesspro.feature.workout.timer.RestAlarmReceiver"
+            android:exported="false" />
+
+        <!-- 开机后清理已过期的休息计时状态（闹钟已被系统清除，不做恢复） -->
+        <receiver
+            android:name="com.fitnesspro.feature.workout.timer.BootCompletedReceiver"
+            android:exported="false"
+            android:enabled="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+
+        <!--
+          WorkManager 按需初始化（Application 实现 Configuration.Provider）：
+          移除库合并进来的默认初始化器，省掉冷启动路径上的一次反射初始化。
+          注意只移除 WorkManagerInitializer，必须保留 ProfileInstaller（安装 Baseline Profile）。
+        -->
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
+            android:exported="false"
+            tools:node="merge">
+            <meta-data
+                android:name="androidx.work.WorkManagerInitializer"
+                android:value="androidx.startup"
+                tools:node="remove" />
+        </provider>
+
+        <!--
+          FileProvider：给系统相机提供拍摄输出目标。
+          只暴露 cache/capture/ 一个子目录（见 res/xml/file_paths.xml），
+          绝不暴露 filesDir —— 那里是用户的全部训练数据与演示文件。
+        -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
+        <!--
+          Health Connect 权限说明页：Android 14+ 要求权限弹窗前必须可跳转到说明。
+          activity-alias 是 Play 对 VIEW_PERMISSION_USAGE 的要求，缺了会被健康应用审核拒掉。
+        -->
+        <activity
+            android:name=".health.HealthConnectRationaleActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="androidx.health.ACTION_SHOW_PERMISSIONS_RATIONALE" />
+            </intent-filter>
+        </activity>
+
+        <activity-alias
+            android:name="ViewPermissionUsageActivity"
+            android:exported="true"
+            android:permission="android.permission.START_VIEW_PERMISSION_USAGE"
+            android:targetActivity=".health.HealthConnectRationaleActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW_PERMISSION_USAGE" />
+                <category android:name="android.intent.category.HEALTH_PERMISSIONS" />
+            </intent-filter>
+        </activity-alias>
+
+        <!--
+          WorkManager 默认使用 JobScheduler，不需要额外声明。
+          Hilt 的 WorkManager 集成通过 FitnessProApplication 实现 Configuration.Provider。
+        -->
+    </application>
+
+</manifest>

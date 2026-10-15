@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="home_title">首页</string>
+    <string name="home_greeting_morning">早上好</string>
+    <string name="home_greeting_afternoon">下午好</string>
+    <string name="home_greeting_evening">晚上好</string>
+    <string name="home_active_session">训练进行中</string>
+    <string name="home_active_session_cta">继续训练</string>
+    <string name="home_active_progress">已完成 %1$d 组 · 开始于 %2$s</string>
+    <string name="home_draft_title">上次训练没练完</string>
+    <string name="home_draft_message">「%1$s」已完成 %2$d 组，进度已保存。要继续这次训练吗？</string>
+    <string name="home_draft_resume">继续训练</string>
+    <string name="home_draft_discard">丢弃草稿</string>
+    <string name="home_draft_discarded">草稿已移入回收站</string>
+    <string name="home_today_plans">今日计划</string>
+    <string name="home_today_plans_empty">今天没有排程的计划。休息也是训练的一部分。</string>
+    <string name="home_start_workout">开始训练</string>
+    <string name="home_completed_banner">完成训练！👊GOT IT！👍</string>
+    <string name="home_completed_detail">%1$d 组 · 容量 %2$s kg · 时长 %3$d 分钟</string>
+    <string name="home_completed_freestyle_title">自由训练</string>
+    <string name="home_starting">正在准备…</string>
+    <string name="home_week_overview">本周概览</string>
+    <string name="home_week_volume">本周容量</string>
+    <string name="home_week_sessions">本周训练</string>
+    <string name="home_streak_weeks">连续打卡</string>
+    <string name="home_total_sessions">累计训练</string>
+    <string name="home_streak_week">%1$d 周</string>
+    <string name="home_sessions_count">%1$d 次</string>
+    <string name="home_streak_unit">周</string>
+    <string name="home_times_unit">次</string>
+
+    <!-- 便当盒格 -->
+    <string name="home_heatmap">训练热力图</string>
+    <string name="home_muscle_distribution">肌群分布</string>
+    <string name="home_muscle_empty">还没有可统计的容量</string>
+    <string name="home_pr_list">个人纪录</string>
+    <string name="home_pr_empty">还没有个人纪录，第一次突破会出现在这里</string>
+    <string name="home_pr_count">个人纪录</string>
+    <string name="home_pr_unit">项</string>
+    <string name="home_quick_actions">快捷入口</string>
+
+    <!-- 迷你趋势卡 -->
+    <string name="home_recent_trend">近 7 天容量</string>
+    <string name="home_view_stats">查看统计 ›</string>
+    <string name="home_trend_empty">最近 7 天还没有训练记录</string>
+    <string name="home_action_plans">我的计划</string>
+    <string name="home_action_history">训练历史</string>
+    <string name="home_action_exercises">动作库</string>
+    <string name="home_action_schedule">训练日历</string>
+    <string name="home_start_failed">无法开始训练，请重试</string>
+    <string name="home_started_at">上次练于 %1$s</string>
+</resources>

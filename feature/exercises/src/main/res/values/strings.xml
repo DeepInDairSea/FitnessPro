@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="exercises_title">动作库</string>
+
+<string name="exercises_delete_confirm_title">删除动作「%1$s」？</string>
+<string name="exercises_delete_confirm_message">动作将进入回收站，30 天内可恢复。使用过该动作的历史记录不受影响。</string>
+    <string name="exercises_picker_title">选择动作</string>
+
+    <!-- 动作新建/编辑 -->
+    <string name="exercise_edit_title_new">新建动作</string>
+    <string name="exercise_edit_title_edit">编辑动作</string>
+    <string name="exercise_edit_save">保存</string>
+    <string name="exercise_edit_saving">保存中…</string>
+    <string name="exercise_edit_name">动作名称</string>
+    <string name="exercise_edit_type">动作类型</string>
+    <string name="exercise_edit_muscle">目标肌群</string>
+    <string name="exercise_edit_major_group">大肌群 / 类别</string>
+    <string name="exercise_edit_sub_group">细分肌群</string>
+    <string name="exercise_edit_equipment">器械</string>
+    <string name="exercise_edit_color">主题色</string>
+    <string name="exercise_edit_color_follow">跟随肌群</string>
+    <string name="exercise_edit_unilateral">左右分别记录</string>
+    <string name="exercise_edit_unilateral_hint">单侧动作会分别记录左右两边的次数</string>
+    <string name="exercise_edit_sets">默认组数</string>
+    <string name="exercise_edit_reps">默认次数</string>
+    <string name="exercise_edit_rest">默认组间休息（秒）</string>
+    <string name="exercise_edit_instructions">动作说明</string>
+    <string name="exercise_edit_media">演示资源</string>
+    <string name="exercise_edit_media_empty">还没有演示图片或视频</string>
+    <string name="exercise_edit_media_bound">已关联，点保存后生效</string>
+    <string name="exercise_edit_media_action">选择演示</string>
+    <string name="exercise_edit_exit_title">要保存本次修改吗？</string>
+    <string name="exercise_edit_exit_message">这个动作还没有保存，直接离开会丢失刚才的修改。</string>
+    <string name="exercise_edit_exit_save">保存并退出</string>
+    <string name="exercise_edit_exit_discard">不保存</string>
+    <string name="exercise_edit_exit_stay">继续编辑</string>
+    <string name="exercises_search_hint">搜索动作名或别名</string>
+    <string name="exercises_tab_all">全部</string>
+    <string name="exercises_tab_favorites">收藏</string>
+    <string name="exercises_tab_recent">最近使用</string>
+    <string name="exercises_tab_custom">自定义</string>
+    <string name="exercises_filter_muscle">肌群</string>
+    <string name="exercises_filter_equipment">器械</string>
+    <string name="exercises_filter_clear">清除筛选</string>
+    <string name="exercises_empty">没有找到匹配的动作</string>
+    <string name="exercises_empty_desc">换个关键词，或把「%1$s」创建为新动作</string>
+    <string name="exercises_create_new">创建「%1$s」</string>
+    <string name="exercises_create_title">新建自定义动作</string>
+    <string name="exercises_create_name">动作名称</string>
+    <string name="exercises_create_name_error">请输入动作名称</string>
+    <string name="exercises_create_duplicate">已存在同名动作</string>
+    <string name="exercises_create_success">已创建</string>
+    <string name="exercises_field_type">动作类型</string>
+    <string name="exercises_field_primary_muscle">主要肌群</string>
+    <string name="exercises_field_equipment">器械</string>
+    <string name="exercises_field_unilateral">单侧动作</string>
+    <string name="exercises_field_default_sets">默认组数</string>
+    <string name="exercises_field_default_reps">默认次数</string>
+    <string name="exercises_field_default_rest">默认组间休息（秒）</string>
+    <string name="exercises_field_instructions">动作要点</string>
+    <string name="exercises_detail_title">动作详情</string>
+    <string name="exercises_detail_pr">个人纪录</string>
+    <string name="exercises_detail_no_pr">还没有纪录，练起来吧</string>
+    <string name="exercises_detail_history">最近记录</string>
+    <string name="exercises_detail_no_history">还没有训练记录</string>
+    <string name="exercises_detail_start_now">立即开始训练</string>
+    <string name="exercises_detail_favorite_add">加入收藏</string>
+    <string name="exercises_detail_favorite_remove">取消收藏</string>
+    <string name="exercises_added_to_plan">已加入计划</string>
+    <string name="exercises_min_select_hint">至少选择一个动作</string>
+</resources>

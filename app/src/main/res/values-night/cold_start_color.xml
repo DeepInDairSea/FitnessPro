@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  系统启动画面背景色（夜间）：取深色 cold_start_background 渐变的中间色 #17161A。
+-->
+<resources>
+    <color name="cold_start_splash_color">#17161A</color>
+</resources>

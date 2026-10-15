@@ -1,0 +1,67 @@
+# ============================================================
+# Fitness Pro —— 版本库忽略规则
+# 原则：只提交源码、资源、构建脚本与文档；
+#      构建产物、本地环境、签名密钥、日志一律不入库。
+# ============================================================
+
+# ---------- Gradle ----------
+.gradle/
+build/
+# Gradle Wrapper 必须入库（团队/CI 靠它对齐版本）
+!gradle/wrapper/gradle-wrapper.jar
+!gradle/wrapper/gradle-wrapper.properties
+
+# ---------- Android 构建产物 ----------
+local.properties
+captures/
+*.apk
+*.aab
+*.ap_
+*.dex
+*.idsig
+*.hprof
+*.class
+
+# ---------- Kotlin ----------
+.kotlin/
+.kotlin_session
+
+# ---------- 签名相关（绝对不能提交） ----------
+keystore.properties
+keystore/
+*.jks
+*.keystore
+
+# ---------- IDE ----------
+.idea/
+*.iml
+*.ipr
+*.iws
+# 团队共享的编辑器配置保留
+!.vscode/settings.json
+
+# ---------- Python 工具链（seed 生成） ----------
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+site/
+build/
+dist/
+
+# ---------- 日志与临时文件 ----------
+*.log
+*.tmp
+*.bak
+*.orig
+*.rej
+build-day.txt
+
+# ---------- 操作系统 ----------
+.DS_Store
+Thumbs.db
+desktop.ini
