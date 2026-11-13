@@ -4,6 +4,7 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import dagger.hilt.android.qualifiers.ApplicationContext
 import timber.log.Timber
 import javax.inject.Inject
@@ -12,11 +13,10 @@ import javax.inject.Singleton
 /**
  * 休息到点闹钟。
  *
- * 使用 `setAndAllowWhileIdle()` 而不是 `setExactAndAllowWhileIdle()`：
- *  - 后者在 API 31+ 需要 `SCHEDULE_EXACT_ALARM` 权限，用户可拒绝，且 Play 有使用场景限制
- *  - 前者**不需要任何权限**
- *  - 训练过程中设备处于用户活跃状态，不会进入 Doze，实际触发误差通常在秒级
- *  - 即便出现延迟，也只影响"提示音"，不影响倒计时正确性（正确性由 endsAtEpochMs 保证）
+ * 优先 `setExactAndAllowWhileIdle()`：训练提示对准时性很敏感 —— 用户反馈
+ * "倒计时结束了很久才响"，非精确闹钟在系统闹钟批处理/厂商省电下可以延迟数分钟，
+ * 这对组间休息完全不可接受。API 31+ 需要精确闹钟权限，拿不到时降级回
+ * `setAndAllowWhileIdle()`（无需权限，正确性仍由 endsAtEpochMs 保证，只是提示可能晚）。
  */
 @Singleton
 class RestAlarmScheduler @Inject constructor(
@@ -25,12 +25,23 @@ class RestAlarmScheduler @Inject constructor(
 
     fun schedule(endsAtEpochMs: Long, exerciseName: String, nextSetHint: String) {
         val alarmManager = context.getSystemService(AlarmManager::class.java) ?: return
+        val pendingIntent = buildPendingIntent(endsAtEpochMs, exerciseName, nextSetHint)
+        val canExact = Build.VERSION.SDK_INT < Build.VERSION_CODES.S ||
+            alarmManager.canScheduleExactAlarms()
         runCatching {
-            alarmManager.setAndAllowWhileIdle(
-                AlarmManager.RTC_WAKEUP,
-                endsAtEpochMs,
-                buildPendingIntent(endsAtEpochMs, exerciseName, nextSetHint),
-            )
+            if (canExact) {
+                alarmManager.setExactAndAllowWhileIdle(
+                    AlarmManager.RTC_WAKEUP,
+                    endsAtEpochMs,
+                    pendingIntent,
+                )
+            } else {
+                alarmManager.setAndAllowWhileIdle(
+                    AlarmManager.RTC_WAKEUP,
+                    endsAtEpochMs,
+                    pendingIntent,
+                )
+            }
         }.onFailure { Timber.w(it, "注册休息闹钟失败") }
     }
 

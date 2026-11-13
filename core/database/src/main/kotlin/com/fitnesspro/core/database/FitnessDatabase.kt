@@ -67,7 +67,7 @@ import com.fitnesspro.core.database.entity.WorkoutSetEntity
         FoodDefinitionEntity::class,
         DietEntryEntity::class,
     ],
-    version = 10,
+    version = 13,
     exportSchema = true,
 )
 abstract class FitnessDatabase : RoomDatabase() {

@@ -102,6 +102,10 @@ data class ActiveWorkout(
     val currentExerciseIndex: Int = 0,
     val currentSetIndex: Int = 0,
     val rest: RestState = RestState.Idle,
+    /** 实时估算消耗（kcal，已完成组的逐组累加值）；null 表示还没算过 */
+    val estimatedCalories: Double? = null,
+    /** 累计消耗对应的有效训练秒数：UI 跳字 = 累计值 + (当前有效秒数 − 基准) 的 MET 估算 */
+    val caloriesAccruedAtSeconds: Int? = null,
 ) {
     val currentExercise: ActiveExercise? get() = exercises.getOrNull(currentExerciseIndex)
     val totalCompletedSets: Int get() = exercises.sumOf { it.completedSetCount }
@@ -150,6 +154,10 @@ data class WorkoutSummary(
     val totalVolumeKg: Double,
     val totalSets: Int,
     val totalReps: Int,
+    /** 估算消耗（kcal，多因素四级降级估算）；null 表示旧数据未估算 */
+    val estimatedCalories: Double? = null,
+    /** 本次估算所用层级（决定精度提示文案）；null 表示旧数据 */
+    val estimationLevel: EstimationLevel? = null,
     val prs: List<PrHit> = emptyList(),
     /** 逐动作明细：分享卡片用它列出"练了什么、练了多少" */
     val exercises: List<SummaryExercise> = emptyList(),

@@ -42,4 +42,9 @@
     <string name="media_missing_action">重新关联</string>
     <string name="media_bind_title">关联演示资源</string>
     <string name="media_bind_subtitle">为这个动作绑定演示图片或视频</string>
+
+    <!-- 动作详情弹层（训练页 / 计划编辑页共用） -->
+    <string name="exercise_detail_defaults">目标 %1$d 组 × %2$s 次 · 组间休息 %3$d 秒</string>
+    <string name="exercise_detail_instructions_title">动作要领</string>
+    <string name="exercise_detail_no_instructions">暂无动作说明</string>
 </resources>

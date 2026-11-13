@@ -69,6 +69,7 @@ import com.fitnesspro.core.designsystem.theme.NumericSize
 import com.fitnesspro.core.designsystem.share.WorkoutShareCard
 import com.fitnesspro.core.designsystem.theme.numericTextStyle
 import com.fitnesspro.core.domain.repository.WorkoutRepository
+import com.fitnesspro.core.model.EstimationLevel
 import com.fitnesspro.core.model.PrHit
 import com.fitnesspro.core.model.PrType
 import com.fitnesspro.core.model.SessionStatus
@@ -520,12 +521,35 @@ fun WorkoutSummaryScreen(
                                 formatVolume(summary.totalVolumeKg),
                             )
                             SummaryMetric(
+                                stringResource(R.string.summary_calories),
+                                stringResource(
+                                    R.string.summary_calories_value,
+                                    (summary.estimatedCalories ?: 0.0).toInt(),
+                                ),
+                            )
+                            SummaryMetric(
                                 stringResource(R.string.summary_sets),
                                 summary.totalSets.toString(),
                             )
                             SummaryMetric(
                                 stringResource(R.string.summary_reps),
                                 summary.totalReps.toString(),
+                            )
+                        }
+                        // 估算精度提示：让用户知道消耗数字的可信度，并引导完善身体资料
+                        summary.estimationLevel?.let { level ->
+                            Spacer(Modifier.height(FitnessTheme.spacing.xs))
+                            Text(
+                                stringResource(
+                                    when (level) {
+                                        EstimationLevel.L1_MULTI_FACTOR -> R.string.summary_estimation_l1
+                                        EstimationLevel.L2_SIMPLIFIED -> R.string.summary_estimation_l2
+                                        EstimationLevel.L3_TV_ADJUSTED -> R.string.summary_estimation_l3
+                                        EstimationLevel.L4_WEIGHT_ONLY -> R.string.summary_estimation_l4
+                                    },
+                                ),
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
                             )
                         }
                         if (summary.pausedSeconds > 0) {

@@ -64,7 +64,10 @@
     <string name="workout_paused_banner">训练已暂停</string>
     <string name="workout_elapsed">已用时间</string>
     <string name="workout_volume">总容量</string>
+    <string name="workout_calories">消耗</string>
+    <string name="workout_calories_value">%1$d kcal</string>
     <string name="workout_progress">%1$d / %2$d 组</string>
+    <string name="workout_exercise_done_badge">已完成目标</string>
     <string name="workout_target_sets">目标 %1$d 组</string>
     <string name="workout_rest_seconds">组间休息 %1$d 秒</string>
     <string name="workout_last_time">上次：%1$s</string>
@@ -102,12 +105,26 @@
     <string name="workout_resume_continue">继续训练</string>
     <string name="workout_resume_abandon">放弃并新建</string>
 
+    <!-- 自重动作负荷 -->
+    <string name="workout_weight_added_label">附加负重 (kg)</string>
+    <string name="workout_bodyweight_load_hint">有效负荷 ≈ %1$s kg（体重 %2$s × %3$s + 负重 %4$s）</string>
+    <string name="workout_bodyweight_need_weight">记录体重后可精确计算自重动作的负荷与消耗（身体页）</string>
+    <string name="workout_set_bodyweight">本次体重</string>
+    <string name="workout_set_bodyweight_title">本次训练体重</string>
+    <string name="workout_set_bodyweight_label">体重 (kg)</string>
+
     <!-- 结束与总结 -->
     <string name="workout_finish_incomplete_title">还有未完成的组</string>
     <string name="workout_finish_incomplete_message">还有 %1$d 组未完成，标记为跳过并结束？</string>
     <string name="summary_title">训练总结</string>
     <string name="summary_duration">训练时长</string>
     <string name="summary_volume">总容量</string>
+    <string name="summary_calories">消耗</string>
+    <string name="summary_calories_value">%1$d kcal</string>
+    <string name="summary_estimation_l1">估算精度：基于体成分与训练容量 ★★★★★</string>
+    <string name="summary_estimation_l2">估算精度：基于身体数据与训练容量 ★★★★☆</string>
+    <string name="summary_estimation_l3">估算精度：基于训练容量，完善身体资料可提升精度 ★★★☆☆</string>
+    <string name="summary_estimation_l4">基础估算，完善身高年龄与体成分可显著提升精度 ★★☆☆☆</string>
     <string name="summary_sets">完成组数</string>
     <string name="summary_reps">总次数</string>
     <string name="summary_pr_section">本次新纪录</string>

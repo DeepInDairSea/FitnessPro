@@ -6,8 +6,6 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.media.AudioAttributes
-import android.media.RingtoneManager
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.fitnesspro.core.model.RestState
@@ -47,6 +45,11 @@ class RestTimerNotifier @Inject constructor(
             }
         )
 
+        // 结束渠道升级为 v2（静音）：提示音与振动由 RestAlarmReceiver 显式负责 ——
+        // 渠道声音只在首次创建时注册，之后设置开关改不动它，且部分厂商 ROM 会静默渠道提示音。
+        // IMPORTANCE_HIGH 保留：横幅弹出（heads-up）由重要级决定，与是否有声音无关。
+        // 旧渠道直接删除，避免用户在系统设置里看到两个"组间休息结束"。
+        nm.deleteNotificationChannel(LEGACY_CHANNEL_FINISHED)
         nm.createNotificationChannel(
             NotificationChannel(
                 CHANNEL_FINISHED,
@@ -54,15 +57,9 @@ class RestTimerNotifier @Inject constructor(
                 NotificationManager.IMPORTANCE_HIGH,
             ).apply {
                 description = context.getString(R.string.channel_rest_finished_desc)
-                enableVibration(true)
-                // 使用 SONIFICATION 音频属性：不会申请音频焦点，因此不会打断用户正在播放的音乐
-                setSound(
-                    RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION),
-                    AudioAttributes.Builder()
-                        .setUsage(AudioAttributes.USAGE_ASSISTANCE_SONIFICATION)
-                        .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-                        .build(),
-                )
+                setShowBadge(false)
+                setSound(null, null)
+                enableVibration(false)
             }
         )
 
@@ -204,7 +201,10 @@ class RestTimerNotifier @Inject constructor(
 
     companion object {
         const val CHANNEL_RUNNING = "rest_running"
-        const val CHANNEL_FINISHED = "rest_finished"
+
+        /** v2：改为静音渠道前的旧 ID，启动时删除 */
+        const val LEGACY_CHANNEL_FINISHED = "rest_finished"
+        const val CHANNEL_FINISHED = "rest_finished_v2"
 
         /** 训练提醒（每日计划提醒） */
         const val CHANNEL_REMINDER = "workout_reminder"

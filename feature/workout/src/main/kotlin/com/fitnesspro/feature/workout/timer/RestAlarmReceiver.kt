@@ -3,6 +3,8 @@ package com.fitnesspro.feature.workout.timer
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.media.AudioAttributes
+import android.media.RingtoneManager
 import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
@@ -13,6 +15,7 @@ import com.fitnesspro.core.domain.repository.SettingsRepository
 import com.fitnesspro.feature.workout.R
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -124,6 +127,12 @@ class RestAlarmReceiver : BroadcastReceiver() {
         notifier.showFinished(exerciseName, nextSetHint)
 
         val nowSettings = settings.current()
+        // 提示音显式播放而不是依赖通知渠道：渠道声音只在渠道创建时注册一次，
+        // 之后用户改设置也不生效（此前 restSoundEnabled 开关实际上没有任何消费方），
+        // 且部分厂商 ROM 会静默渠道提示音。显式播放保证"到点一定响"。
+        if (nowSettings.restSoundEnabled) {
+            playAlarmSound(context)
+        }
         if (nowSettings.restVibrationEnabled) {
             vibrate(context)
         }
@@ -131,6 +140,28 @@ class RestAlarmReceiver : BroadcastReceiver() {
         if (nowSettings.restTtsEnabled) {
             ttsAnnouncer.announce(context.getString(R.string.rest_finished_title))
         }
+    }
+
+    /**
+     * 播放休息结束提示音：走 ALARM 音频用途 —— 闹铃流不受媒体音量/音乐播放影响，
+     * 训练时放着音乐也能听见。响 3 秒自动停，训练场景不需要响到用户手动关闭。
+     */
+    private fun playAlarmSound(context: Context) {
+        runCatching {
+            val uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
+                ?: RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+                ?: return
+            val ringtone = RingtoneManager.getRingtone(context, uri) ?: return
+            ringtone.audioAttributes = AudioAttributes.Builder()
+                .setUsage(AudioAttributes.USAGE_ALARM)
+                .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                .build()
+            ringtone.play()
+            applicationScope.launch {
+                delay(ALARM_SOUND_DURATION_MS)
+                runCatching { if (ringtone.isPlaying) ringtone.stop() }
+            }
+        }.onFailure { Timber.w(it, "播放休息结束提示音失败") }
     }
 
     private fun vibrate(context: Context) {
@@ -142,13 +173,14 @@ class RestAlarmReceiver : BroadcastReceiver() {
                 context.getSystemService(Vibrator::class.java)
             } ?: return
 
-            val pattern = longArrayOf(0, 200, 120, 200)
+            val pattern = longArrayOf(0, 300, 150, 300)
             vibrator.vibrate(VibrationEffect.createWaveform(pattern, -1))
         }.onFailure { Timber.w(it, "震动失败") }
     }
 
     private companion object {
         const val EXTEND_SECONDS = 30
+        const val ALARM_SOUND_DURATION_MS = 3_000L
     }
 }
 

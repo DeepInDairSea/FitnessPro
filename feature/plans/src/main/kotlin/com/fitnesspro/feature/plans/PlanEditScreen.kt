@@ -22,6 +22,7 @@ import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.outlined.Image
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
@@ -66,9 +67,11 @@ import com.fitnesspro.core.model.ExerciseSnapshot
 import com.fitnesspro.core.model.MajorGroup
 import com.fitnesspro.core.data.media.MediaRegistrar
 import com.fitnesspro.core.model.MediaRef
+import com.fitnesspro.core.mediaui.ExerciseDetailSheet
 import com.fitnesspro.core.mediaui.ExerciseMedia
 import com.fitnesspro.core.mediaui.MediaAttachSheet
 import com.fitnesspro.core.mediaui.MEDIA_SIZE_SMALL
+import com.fitnesspro.core.model.Exercise
 import com.fitnesspro.core.model.PlanDetail
 import com.fitnesspro.core.model.PlanExerciseItem
 import com.fitnesspro.core.model.PlannedSet
@@ -154,6 +157,21 @@ class PlanEditViewModel @Inject constructor(
 
     private var planId: Long? = initialPlanId
     private var loadedDetail: PlanDetail? = null
+
+    /** 动作详情弹层：点动作名称查看要领/器械/处方默认值，排计划时不用来回翻动作库 */
+    private val detailExercise = MutableStateFlow<Exercise?>(null)
+    val detailExerciseState: StateFlow<Exercise?> = detailExercise.asStateFlow()
+
+    fun openExerciseDetail(definitionId: Long?) {
+        val id = definitionId ?: return
+        viewModelScope.launch {
+            detailExercise.value = exerciseRepository.getExercise(id)
+        }
+    }
+
+    fun closeExerciseDetail() {
+        detailExercise.value = null
+    }
 
     /**
      * 串行化写库。
@@ -676,6 +694,9 @@ fun PlanEditScreen(
                     onUpdateTarget = { sets, reps -> viewModel.onUpdateTarget(item.id, sets, reps) },
                     onOpenMedia = { mediaSheetFor = item },
                     onRelinkMedia = { relinkSheetFor = item },
+                    onOpenDetail = {
+                        viewModel.openExerciseDetail(item.exercise.definitionId)
+                    },
                 )
             }
 
@@ -719,6 +740,13 @@ fun PlanEditScreen(
             onRemove = { viewModel.setMedia(item.id, null) },
         )
     }
+
+    // 动作详情弹层：排计划间隙点动作名称即可查要领，不用来回切动作库
+    val detailExercise by viewModel.detailExerciseState.collectAsStateWithLifecycle()
+    ExerciseDetailSheet(
+        exercise = detailExercise,
+        onDismiss = viewModel::closeExerciseDetail,
+    )
 }
 
 /**
@@ -766,6 +794,7 @@ private fun EditableExerciseCard(
     onRemove: () -> Unit,
     onUpdateTarget: (Int, String) -> Unit,
     onOpenMedia: () -> Unit,
+    onOpenDetail: () -> Unit = {},
     onRelinkMedia: () -> Unit = {},
 ) {
     Card(
@@ -787,6 +816,8 @@ private fun EditableExerciseCard(
                         style = MaterialTheme.typography.titleSmall,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
+                        // 点动作名称查看动作详情（要领/器械/处方默认值）
+                        modifier = Modifier.clickable(onClick = onOpenDetail),
                     )
                     Spacer(Modifier.height(FitnessTheme.spacing.xs))
                     LabelChip(stringResource(item.exercise.type.labelRes()))

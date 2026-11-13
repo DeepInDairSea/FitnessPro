@@ -50,6 +50,12 @@ data class WorkoutSessionEntity(
     val totalVolumeKg: Double = 0.0,
     val totalSets: Int = 0,
     val totalReps: Int = 0,
+    /** 估算消耗（kcal，分组累加：已完成组之和），随每组落库累加；v11 新增 */
+    val estimatedCalories: Double? = null,
+    /** 估算所用层级（EstimationLevel 枚举名）：数据完整度决定精度，v12 新增 */
+    val calorieEstimationLevel: String? = null,
+    /** 累计消耗对应的"有效训练秒数"基准：UI 实时跳字 = 基准值 + 当前组 MET 估算；v13 新增 */
+    val calorieElapsedBaseSeconds: Int? = null,
     /** 训练当时的体重快照，用于自重动作的容量计算（体重之后变化不影响历史容量） */
     val bodyWeightKgSnapshot: Double? = null,
     val perceivedEffort: Int? = null,

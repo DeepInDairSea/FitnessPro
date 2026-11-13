@@ -73,18 +73,23 @@ import com.fitnesspro.core.domain.repository.DietEntry
 import com.fitnesspro.core.domain.repository.DietTotals
 import com.fitnesspro.core.domain.repository.FoodRepository
 import com.fitnesspro.core.domain.repository.SettingsRepository
+import com.fitnesspro.core.domain.repository.WorkoutRepository
 import com.fitnesspro.core.model.BodyMeasurement
 import com.fitnesspro.core.model.DataSource
 import com.fitnesspro.core.model.WeightUnit
 import com.fitnesspro.core.model.time.TimeProvider
 import com.fitnesspro.core.model.UnitConversion
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.time.LocalDate
+import java.time.ZoneId
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -117,6 +122,8 @@ data class BodyUiState(
     val bmr: Double? = null,
     /** 每日总消耗 TDEE = BMR × 活动系数 */
     val tdee: Double? = null,
+    /** 今日训练消耗合计（kcal，MET 估算）：训练中的会话也计入，实时联动 */
+    val trainingCalories: Double = 0.0,
 )
 
 @HiltViewModel
@@ -125,6 +132,7 @@ class BodyViewModel @Inject constructor(
     private val settings: SettingsRepository,
     private val healthConnectManager: HealthConnectManager,
     private val foodRepository: FoodRepository,
+    private val workoutRepository: WorkoutRepository,
     private val time: TimeProvider,
 ) : ViewModel() {
 
@@ -138,6 +146,15 @@ class BodyViewModel @Inject constructor(
         foodRepository.observeDietDay(time.todayEpochDay()),
     ) { totals, entries -> totals to entries }
 
+    /** 今日训练消耗（MET 估算）：训练中的会话也计入，训练途中就能看到数字在涨 */
+    private val todayTrainingCalories: Flow<Double> = flow {
+        val zone = ZoneId.systemDefault()
+        val today = time.todayEpochDay()
+        val start = LocalDate.ofEpochDay(today).atStartOfDay(zone).toInstant().toEpochMilli()
+        val end = LocalDate.ofEpochDay(today + 1).atStartOfDay(zone).toInstant().toEpochMilli()
+        emitAll(workoutRepository.observeTrainingCaloriesBetween(start, end))
+    }
+
     /** 瞬时 UI 状态打包（消息/同步中/趋势维度） */
     private val transient = combine(
         message,
@@ -150,7 +167,8 @@ class BodyViewModel @Inject constructor(
         settings.settings,
         transient,
         dietSummary,
-    ) { records, userSettings, (msg, isSyncing, metric), (dietTotals, _) ->
+        todayTrainingCalories,
+    ) { records, userSettings, (msg, isSyncing, metric), (dietTotals, _), trainingCalories ->
         // observeAll 是按日期倒序的；趋势图需要正序，否则线会从右往左画
         val ascending = records.sortedBy { it.epochDay }
         val unit = userSettings.weightUnit
@@ -209,6 +227,7 @@ class BodyViewModel @Inject constructor(
             dietTotals = dietTotals,
             bmr = currentBmr,
             tdee = MetabolicCalculator.tdee(currentBmr, activity),
+            trainingCalories = trainingCalories,
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), BodyUiState())
 
@@ -373,6 +392,7 @@ private fun DietSummaryCard(
     totals: DietTotals,
     bmr: Double?,
     tdee: Double?,
+    trainingCalories: Double,
     onOpenDiet: () -> Unit,
 ) {
     SoftCard(modifier = Modifier.fillMaxWidth()) {
@@ -392,7 +412,13 @@ private fun DietSummaryCard(
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                     Text(
-                        "每日消耗 " + formatKcal(tdee),
+                        // 训练消耗直接并入每日总消耗：练完（甚至练的途中）盈亏立即反映真实情况
+                        if (trainingCalories > 0.0) {
+                            "每日消耗 " + formatKcal(tdee) +
+                                "（含训练 " + formatKcal(trainingCalories) + "）"
+                        } else {
+                            "每日消耗 " + formatKcal(tdee)
+                        },
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -417,9 +443,10 @@ private fun DietSummaryCard(
                 }
                 Column(horizontalAlignment = Alignment.End) {
                     Text(
-                        surplusLabel(totals.kcal, tdee),
+                        // 盈亏 = 摄入 vs（TDEE + 今日训练消耗）
+                        surplusLabel(totals.kcal, tdee?.plus(trainingCalories)),
                         style = MaterialTheme.typography.titleMedium,
-                        color = surplusColor(totals.kcal, tdee),
+                        color = surplusColor(totals.kcal, tdee?.plus(trainingCalories)),
                     )
                     Text(
                         stringResource(BodyR.string.body_diet_vs_tdee),
@@ -680,6 +707,7 @@ fun BodyScreen(
                     totals = state.dietTotals,
                     bmr = state.bmr,
                     tdee = state.tdee,
+                    trainingCalories = state.trainingCalories,
                     onOpenDiet = onOpenDiet,
                 )
             }

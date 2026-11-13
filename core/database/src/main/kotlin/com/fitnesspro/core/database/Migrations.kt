@@ -204,6 +204,55 @@ private val MIGRATION_9_10 = object : Migration(9, 10) {
     }
 }
 
+/**
+ * v10 → v11：训练会话增加估算消耗列。
+ *
+ * `estimatedCalories REAL DEFAULT NULL`（kcal，MET 法实时估算）。
+ * 可空列 + DEFAULT NULL：老数据没有消耗概念，置空即可，无需回填。
+ */
+private val MIGRATION_10_11 = object : Migration(10, 11) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL("ALTER TABLE workout_session ADD COLUMN estimatedCalories REAL DEFAULT NULL")
+    }
+}
+
+/**
+ * v11 → v12：动作能耗维度字段（fit-carculate.md / kcal-develp.md）。
+ *
+ * exercise_definition 新增多列，全部带默认值：老数据按默认值参与估算
+ * （MET 3.5 / 非自重 / 效率 1.0 / 复合 / 标准节奏），种子数据升级后会回填真实标定值。
+ * workout_session 记录本次估算所用层级，总结页展示精度提示。
+ */
+private val MIGRATION_11_12 = object : Migration(11, 12) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL("ALTER TABLE exercise_definition ADD COLUMN metValue REAL NOT NULL DEFAULT 3.5")
+        db.execSQL("ALTER TABLE exercise_definition ADD COLUMN isBodyweight INTEGER NOT NULL DEFAULT 0")
+        db.execSQL("ALTER TABLE exercise_definition ADD COLUMN selfWeightCoefficient REAL NOT NULL DEFAULT 0.5")
+        db.execSQL("ALTER TABLE exercise_definition ADD COLUMN equipmentEfficiency REAL NOT NULL DEFAULT 1.0")
+        db.execSQL("ALTER TABLE exercise_definition ADD COLUMN isCompound INTEGER NOT NULL DEFAULT 1")
+        db.execSQL("ALTER TABLE exercise_definition ADD COLUMN tempoFactor REAL NOT NULL DEFAULT 1.0")
+        db.execSQL("ALTER TABLE exercise_definition ADD COLUMN intensityZone TEXT NOT NULL DEFAULT 'HYPERTROPHY'")
+        db.execSQL("ALTER TABLE exercise_definition ADD COLUMN movementPattern TEXT NOT NULL DEFAULT 'OTHER'")
+        db.execSQL("ALTER TABLE exercise_definition ADD COLUMN metabolicType TEXT NOT NULL DEFAULT 'MIXED'")
+        db.execSQL("ALTER TABLE exercise_definition ADD COLUMN averageRepDurationSeconds INTEGER NOT NULL DEFAULT 3")
+        db.execSQL("ALTER TABLE exercise_definition ADD COLUMN primaryMuscleVolume TEXT NOT NULL DEFAULT 'LARGE'")
+        db.execSQL("ALTER TABLE exercise_definition ADD COLUMN isBeginnerFriendly INTEGER NOT NULL DEFAULT 1")
+        db.execSQL("ALTER TABLE exercise_definition ADD COLUMN isWarmupSuitable INTEGER NOT NULL DEFAULT 0")
+        db.execSQL("ALTER TABLE workout_session ADD COLUMN calorieEstimationLevel TEXT DEFAULT NULL")
+    }
+}
+
+/**
+ * v12 → v13：分组计算方案的实时跳字基准。
+ * `calorieElapsedBaseSeconds`：累计消耗对应的有效训练秒数，
+ * UI 实时消耗 = 累计值 + (当前有效秒数 − 基准) 的 MET 估算。
+ */
+private val MIGRATION_12_13 = object : Migration(12, 13) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL("ALTER TABLE workout_session ADD COLUMN calorieElapsedBaseSeconds INTEGER DEFAULT NULL")
+    }
+}
+
 val ALL_MIGRATIONS: Array<Migration> = arrayOf(
     // 迁移定义必须在 ALL_MIGRATIONS 之前（顶层属性按文件顺序初始化）
     MIGRATION_1_2,
@@ -215,4 +264,7 @@ val ALL_MIGRATIONS: Array<Migration> = arrayOf(
     MIGRATION_7_8,
     MIGRATION_8_9,
     MIGRATION_9_10,
+    MIGRATION_10_11,
+    MIGRATION_11_12,
+    MIGRATION_12_13,
 )

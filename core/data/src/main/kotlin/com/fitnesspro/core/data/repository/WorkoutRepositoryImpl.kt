@@ -66,6 +66,9 @@ class WorkoutRepositoryImpl @Inject constructor(
             times.map { time.epochMsToEpochDay(it) }
         }
 
+    override fun observeTrainingCaloriesBetween(fromEpochMs: Long, toEpochMs: Long): Flow<Double> =
+        workoutDao.observeTrainingCaloriesBetween(fromEpochMs, toEpochMs)
+
     override suspend fun getLastPerformance(exerciseDefinitionId: Long): LastPerformance {
         val exerciseType = exerciseDao.getById(exerciseDefinitionId)?.type
             .toEnum(ExerciseType.WEIGHT_REPS)

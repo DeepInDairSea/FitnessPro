@@ -132,6 +132,7 @@ interface WorkoutDao {
         SET status = :status, completedAt = :completedAt,
             totalDurationSeconds = :duration, totalVolumeKg = :volume,
             totalSets = :sets, totalReps = :reps,
+            estimatedCalories = :calories, calorieEstimationLevel = :calorieLevel,
             activeSegmentStartedAt = NULL, updatedAt = :now
         WHERE id = :sessionId
         """
@@ -144,6 +145,8 @@ interface WorkoutDao {
         volume: Double,
         sets: Int,
         reps: Int,
+        calories: Double?,
+        calorieLevel: String?,
         now: Long,
     )
 
@@ -515,6 +518,35 @@ interface WorkoutDao {
 
     @Query("SELECT * FROM workout_session_state WHERE sessionId = :sessionId")
     fun observeState(sessionId: Long): Flow<WorkoutSessionStateEntity?>
+
+    /**
+     * 会话组计数观察流。
+     *
+     * 存在的意义：训练页的组合并流只观察了 session / workout_exercise / workout_session_state
+     * 三张表，而"加一组"只写 workout_set 表 —— 三张被观察的表都没变化，Room Flow 不会重新发射，
+     * UI 就看不到新加的组。把这个计数流并进组合即可：它引用了 workout_set 表，
+     * 任何组的插入/删除都会触发整个查询失效并重取。
+     */
+    @Query(
+        """
+        SELECT COUNT(*) FROM workout_set ws
+        JOIN workout_exercise we ON ws.workoutExerciseId = we.id
+        WHERE we.sessionId = :sessionId
+        """
+    )
+    fun observeSetCount(sessionId: Long): Flow<Int>
+
+    /**
+     * 时间范围内的训练消耗合计（kcal，MET 估算）。
+     * 进行中的会话也计入（每组落库都会更新估算值），身体页"今日训练消耗"靠它实时联动。
+     */
+    @Query(
+        """
+        SELECT COALESCE(SUM(estimatedCalories), 0) FROM workout_session
+        WHERE isDeleted = 0 AND startedAt >= :fromEpochMs AND startedAt < :toEpochMs
+        """
+    )
+    fun observeTrainingCaloriesBetween(fromEpochMs: Long, toEpochMs: Long): Flow<Double>
 
     @Upsert
     suspend fun upsertState(state: WorkoutSessionStateEntity)

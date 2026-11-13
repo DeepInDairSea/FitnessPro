@@ -160,6 +160,16 @@ class PlanRepositoryImpl @Inject constructor(
                     .filter { it.id !in incomingIds }
                     .forEach { planDao.deleteExercise(it.id) }
 
+                // 唯一索引 (planId, orderIndex) 不允许中间态冲突：
+                // 调整过顺序后，直接按新 orderIndex 逐条 update 会在交换相邻两项时
+                // 撞上尚未更新的旧值 → 整个事务失败 → 表现为"调了顺序保存不生效"。
+                // 先把本次保留的所有动作统一挪到负数临时区间，下方循环再写入最终顺序。
+                existingExercises
+                    .filter { it.id in incomingIds }
+                    .forEachIndexed { index, entity ->
+                        planDao.updateExerciseOrder(entity.id, -(index + 1).toDouble())
+                    }
+
                 detail.exercises.forEach { item ->
                     val entity = PlanExerciseEntity(
                         id = item.id,

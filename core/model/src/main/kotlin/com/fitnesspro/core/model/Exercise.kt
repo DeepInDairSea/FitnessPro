@@ -51,6 +51,33 @@ data class Exercise(
     val defaultSets: Int = 3,
     val defaultReps: String? = "10",
     val instructions: String? = null,
+    // ===== 能耗维度（v12，卡路里多因素估算的输入）=====
+    /** 基础 MET 值 */
+    val metValue: Double = 3.5,
+    /** 是否自重动作：有效负荷 = 体重 × 自重系数 + 外部配重 */
+    val isBodyweight: Boolean = false,
+    /** 自重负荷系数（标准俯卧撑 0.64、引体 1.00、自重深蹲 0.75……） */
+    val selfWeightCoefficient: Double = 0.5,
+    /** 器械效率系数：自由重量 1.0、固定器械 0.85、绳索 0.8 */
+    val equipmentEfficiency: Double = 1.0,
+    /** 复合动作（多关节）能耗高于孤立动作 */
+    val isCompound: Boolean = true,
+    /** 节奏因子（慢速离心/暂停/爆发） */
+    val tempoFactor: Double = 1.0,
+    /** 强度区：MET 校正 ×0.85~1.4 */
+    val intensityZone: IntensityZone = IntensityZone.HYPERTROPHY,
+    /** 动作模式 */
+    val movementPattern: MovementPattern = MovementPattern.OTHER,
+    /** 代谢类型 */
+    val metabolicType: MetabolicType = MetabolicType.MIXED,
+    /** 单次动作平均时长（秒） */
+    val averageRepDurationSeconds: Int = 3,
+    /** 肌群体积分层（能耗基准层级） */
+    val primaryMuscleVolume: MuscleVolumeTier = MuscleVolumeTier.LARGE,
+    /** 是否适合新手 */
+    val isBeginnerFriendly: Boolean = true,
+    /** 是否适合热身 */
+    val isWarmupSuitable: Boolean = false,
     val media: MediaRef? = null,
     /** 自定义身份色（hex，如 "#F0653C"）；null 表示跟随主肌群的色系 */
     val colorKey: String? = null,
@@ -78,6 +105,10 @@ data class ExerciseSnapshot(
     val name: String,
     val type: ExerciseType,
     val isUnilateral: Boolean = false,
+    /** 是否自重动作：训练页输入框按"附加负重"语义展示 */
+    val isBodyweight: Boolean = false,
+    /** 自重负荷系数：有效负荷 = 体重 × 系数 + 附加负重 */
+    val selfWeightCoefficient: Double = 0.5,
     /**
      * 主要肌群。不是快照语义（不受"改动作名"影响），而是给计划/训练页做**按部位分区**
      * 用的显示信息：一个计划同时练肩+背时，训练页据此把动作分成"肩部/背部"两块。

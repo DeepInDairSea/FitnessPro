@@ -181,6 +181,12 @@ interface WorkoutRepository {
     suspend fun purgeExpiredTrash(retentionDays: Int): Outcome<Int>
     fun observeCompletedStartEpochDays(): Flow<List<Long>>
 
+    /**
+     * 时间范围内的训练消耗合计（kcal，MET 估算）。
+     * 进行中的会话也计入：训练途中身体页的"今日消耗"就能实时看到增长。
+     */
+    fun observeTrainingCaloriesBetween(fromEpochMs: Long, toEpochMs: Long): Flow<Double>
+
     suspend fun getLastPerformance(exerciseDefinitionId: Long): LastPerformance
     suspend fun previousSessionSets(exerciseDefinitionId: Long): List<com.fitnesspro.core.model.SetRecord>
 

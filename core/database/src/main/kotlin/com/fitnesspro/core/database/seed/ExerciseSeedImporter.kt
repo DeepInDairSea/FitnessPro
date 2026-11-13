@@ -39,6 +39,20 @@ data class SeedExercise(
     val majorGroup: String? = null,
     /** 细分肌群（中文名即 ID，须属于 majorGroup）—— v2 分类体系 */
     val subGroup: String? = null,
+    // ===== 能耗维度（v3 标定，fit-carculate.md / kcal-develp.md）=====
+    val metValue: Double = 3.5,
+    val isBodyweight: Boolean = false,
+    val selfWeightCoefficient: Double = 0.5,
+    val equipmentEfficiency: Double = 1.0,
+    val isCompound: Boolean = true,
+    val tempoFactor: Double = 1.0,
+    val intensityZone: String = "HYPERTROPHY",
+    val movementPattern: String = "OTHER",
+    val metabolicType: String = "MIXED",
+    val averageRepDurationSeconds: Int = 3,
+    val primaryMuscleVolume: String = "LARGE",
+    val isBeginnerFriendly: Boolean = true,
+    val isWarmupSuitable: Boolean = false,
 )
 
 @Serializable
@@ -151,6 +165,20 @@ class ExerciseSeedImporter @Inject constructor(
         defaultSets = defaultSets,
         defaultReps = defaultReps,
         instructions = instructions,
+        // 能耗维度标定值：逐动作写入，卡路里多因素估算的输入
+        metValue = metValue,
+        isBodyweight = isBodyweight,
+        selfWeightCoefficient = selfWeightCoefficient,
+        equipmentEfficiency = equipmentEfficiency,
+        isCompound = isCompound,
+        tempoFactor = tempoFactor,
+        intensityZone = intensityZone,
+        movementPattern = movementPattern,
+        metabolicType = metabolicType,
+        averageRepDurationSeconds = averageRepDurationSeconds,
+        primaryMuscleVolume = primaryMuscleVolume,
+        isBeginnerFriendly = isBeginnerFriendly,
+        isWarmupSuitable = isWarmupSuitable,
         isCustom = false,
         createdAt = now,
         updatedAt = now,
@@ -158,6 +186,11 @@ class ExerciseSeedImporter @Inject constructor(
 
     companion object {
         const val SEED_FILE = "exercise_seed.json"
-        const val FLAG_KEY = "exercise_seed_v2"
+
+        /**
+         * v3：能耗维度标定。升版让老安装也重导一次——
+         * 导入按名更新且保留收藏/媒体/用量，只会回填标定字段，对用户无感。
+         */
+        const val FLAG_KEY = "exercise_seed_v3"
     }
 }

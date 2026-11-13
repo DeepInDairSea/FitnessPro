@@ -8,6 +8,7 @@ import com.fitnesspro.core.database.dao.ExerciseDao
 import com.fitnesspro.core.database.dao.PersonalRecordDao
 import com.fitnesspro.core.database.dao.PlanDao
 import com.fitnesspro.core.database.dao.WorkoutDao
+import com.fitnesspro.core.database.entity.ExerciseDefinitionEntity
 import com.fitnesspro.core.database.entity.PersonalRecordEntity
 import com.fitnesspro.core.database.entity.WorkoutExerciseEntity
 import com.fitnesspro.core.database.entity.WorkoutSessionEntity
@@ -15,6 +16,7 @@ import com.fitnesspro.core.database.entity.WorkoutSessionStateEntity
 import com.fitnesspro.core.database.entity.WorkoutSetEntity
 import com.fitnesspro.core.domain.calculator.PersonalRecordDetector
 import com.fitnesspro.core.domain.repository.SettingsRepository
+import com.fitnesspro.core.domain.calculator.AdvancedCalorieEstimator
 import com.fitnesspro.core.domain.calculator.VolumeCalculator
 import com.fitnesspro.core.domain.repository.BodyRepository
 import com.fitnesspro.core.domain.timer.RestTimerGateway
@@ -27,6 +29,8 @@ import com.fitnesspro.core.model.ActiveWorkout
 import com.fitnesspro.core.model.ExerciseSnapshot
 import com.fitnesspro.core.model.ExerciseStatus
 import com.fitnesspro.core.model.ExerciseType
+import com.fitnesspro.core.model.EstimationLevel
+import com.fitnesspro.core.model.IntensityZone
 import com.fitnesspro.core.model.MediaType
 import com.fitnesspro.core.model.MuscleGroup
 import com.fitnesspro.core.model.PrHit
@@ -47,10 +51,13 @@ import com.fitnesspro.core.model.WorkoutSummary
 import com.fitnesspro.core.model.result.Outcome
 import com.fitnesspro.core.model.result.runCatchingOutcomeSuspend
 import com.fitnesspro.core.model.time.TimeProvider
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -133,23 +140,46 @@ class WorkoutSessionManager @Inject constructor(
                 combine(
                     workoutDao.observeExercises(sessionId),
                     workoutDao.observeState(sessionId),
-                ) { exercises, state -> exercises to state }
+                    // 第三个流只用于失效联动："加一组"只写 workout_set 表，
+                    // 上面两个被观察的表都没变，不并入它 UI 就刷新不出新加的组
+                    workoutDao.observeSetCount(sessionId),
+                ) { exercises, state, _ -> exercises to state }
+                    .flatMapLatest { (exercises, state) ->
+                        // 休息是否结束取决于墙钟与 endsAtEpochMs 的比较，而不是数据库变更：
+                        // 休息期间没有任何写入，没有这个节拍，"休息结束"提示条要等到
+                        // 下一次数据库写入才会出现（用户感知为"倒计时结束后很久才提示"）
+                        if (state?.restTimerEndsAtEpochMs != null || state?.restTimerPausedRemainingMs != null) {
+                            combine(flowOf(exercises to state), restTick()) { pair, _ -> pair }
+                        } else {
+                            flowOf(exercises to state)
+                        }
+                    }
                     .map { (exercises, state) -> buildActiveWorkout(session, exercises, state) }
             }
         }
+
+    /** 休息进行中的时钟节拍：每秒重估一次休息状态，让"休息结束"准时出现 */
+    private fun restTick(intervalMs: Long = 1_000L): Flow<Unit> = flow {
+        while (true) {
+            emit(Unit)
+            delay(intervalMs)
+        }
+    }
 
     private suspend fun buildActiveWorkout(
         session: WorkoutSessionEntity,
         exercises: List<WorkoutExerciseEntity>,
         state: WorkoutSessionStateEntity?,
     ): ActiveWorkout {
-        // 部位用于训练页"按部位分区"：一次批量查询，避免逐条回查动作库
-        val muscles = exercises
+        // 部位用于训练页"按部位分区"，自重标定用于"附加负重"输入提示：
+        // 一次批量查询，避免逐条回查动作库
+        val defs = exercises
             .mapNotNull { it.exerciseDefinitionId }
             .distinct()
             .takeIf { it.isNotEmpty() }
-            ?.let { ids -> exerciseDao.getByIds(ids).associate { it.id to it.primaryMuscle.toEnum(MuscleGroup.OTHER) } }
+            ?.let { ids -> exerciseDao.getByIds(ids).associateBy { it.id } }
             .orEmpty()
+        val muscles = defs.mapValues { (_, def) -> def.primaryMuscle.toEnum(MuscleGroup.OTHER) }
 
         val activeExercises = exercises.map { entity ->
             val type = entity.typeSnapshot.toEnum(ExerciseType.WEIGHT_REPS)
@@ -171,6 +201,8 @@ class WorkoutSessionManager @Inject constructor(
                     name = entity.nameSnapshot,
                     type = type,
                     isUnilateral = false,
+                    isBodyweight = definitionId?.let { defs[it]?.isBodyweight } ?: false,
+                    selfWeightCoefficient = definitionId?.let { defs[it]?.selfWeightCoefficient } ?: 0.5,
                     primaryMuscle = definitionId?.let { muscles[it] },
                 ),
                 orderIndex = entity.orderIndex,
@@ -198,6 +230,104 @@ class WorkoutSessionManager @Inject constructor(
             currentExerciseIndex = state?.currentExerciseIndex ?: 0,
             currentSetIndex = state?.currentSetIndex ?: 0,
             rest = restoreRestState(state),
+            estimatedCalories = session.estimatedCalories,
+            caloriesAccruedAtSeconds = session.calorieElapsedBaseSeconds,
+        )
+    }
+
+    // ==================================================================
+    // 卡路里估算（kcal-develp.md 分组计算方案 A：逐组累加 + 实时跳字）
+    // ==================================================================
+
+    /**
+     * 汇总会话内各动作的完成工作量（结束训练时算 EPOC 用）。
+     * 结合动作字典的能耗标定（基础 MET / 自重系数 / 器械效率 / 复合度 /
+     * 节奏 / 强度区）；动作定义缺失（已删除/自定义无标定）时逐字段回落保守默认值。
+     */
+    private suspend fun buildCalorieWork(
+        sessionId: Long,
+        allSets: List<WorkoutSetEntity>,
+    ): List<AdvancedCalorieEstimator.ExerciseWork> {
+        val exercises = workoutDao.getExercises(sessionId)
+        val defIds = exercises.mapNotNull { it.exerciseDefinitionId }.distinct()
+        val defs = if (defIds.isEmpty()) {
+            emptyMap()
+        } else {
+            exerciseDao.getByIds(defIds).associateBy { it.id }
+        }
+        return exercises.mapNotNull { ex ->
+            buildWorkForExercise(ex, defs[ex.exerciseDefinitionId], allSets)
+        }
+    }
+
+    /** 单个动作的工作量（结束训练时汇总 EPOC 用） */
+    private fun buildWorkForExercise(
+        exercise: WorkoutExerciseEntity,
+        definition: ExerciseDefinitionEntity?,
+        allSets: List<WorkoutSetEntity>,
+    ): AdvancedCalorieEstimator.ExerciseWork? {
+        val completed = allSets.filter {
+            it.workoutExerciseId == exercise.id && it.status == SetStatus.COMPLETED.name
+        }
+        if (completed.isEmpty()) return null
+        val reps = completed.sumOf { (it.reps ?: 0) + (it.leftReps ?: 0) + (it.rightReps ?: 0) }
+        return AdvancedCalorieEstimator.ExerciseWork.fromCalibration(
+            metValue = definition?.metValue,
+            isBodyweight = definition?.isBodyweight,
+            selfWeightCoefficient = definition?.selfWeightCoefficient,
+            equipmentEfficiency = definition?.equipmentEfficiency,
+            isCompound = definition?.isCompound,
+            // 单双侧：训练快照未存该标志，取动作库当前值
+            isUnilateral = definition?.isUnilateral ?: false,
+            tempoFactor = definition?.tempoFactor,
+            intensityZone = definition?.intensityZone?.let { IntensityZone.fromNameOrNull(it) },
+            averageRepDurationSeconds = definition?.averageRepDurationSeconds,
+            completedSets = completed.size,
+            totalReps = reps,
+            externalWeightKg = completed.maxOfOrNull { it.weightKg ?: 0.0 } ?: 0.0,
+        )
+    }
+
+    /**
+     * 刚完成这一组的工作量（逐组累加的估算输入）。
+     * 只包含本组的次数与配重——每组完成时只算这一组的消耗。
+     */
+    private fun buildWorkForSingleSet(
+        exercise: WorkoutExerciseEntity,
+        definition: ExerciseDefinitionEntity?,
+        weightKg: Double?,
+        reps: Int,
+    ): AdvancedCalorieEstimator.ExerciseWork =
+        AdvancedCalorieEstimator.ExerciseWork.fromCalibration(
+            metValue = definition?.metValue,
+            isBodyweight = definition?.isBodyweight,
+            selfWeightCoefficient = definition?.selfWeightCoefficient,
+            equipmentEfficiency = definition?.equipmentEfficiency,
+            isCompound = definition?.isCompound,
+            isUnilateral = definition?.isUnilateral ?: false,
+            tempoFactor = definition?.tempoFactor,
+            intensityZone = definition?.intensityZone?.let { IntensityZone.fromNameOrNull(it) },
+            averageRepDurationSeconds = definition?.averageRepDurationSeconds,
+            completedSets = 1,
+            totalReps = reps,
+            externalWeightKg = weightKg ?: 0.0,
+        )
+
+    /**
+     * 估算用身体数据快照：体重优先取会话快照（训练后体重变化不影响本次估算），
+     * 身高/体成分取最近一条身体记录，年龄取设置。
+     */
+    private suspend fun buildEstimatorProfile(
+        session: WorkoutSessionEntity,
+    ): AdvancedCalorieEstimator.EstimatorProfile {
+        val latestBody = runCatching { bodyRepository.observeAll().first().firstOrNull() }.getOrNull()
+        val userSettings = settings.current()
+        return AdvancedCalorieEstimator.EstimatorProfile(
+            weightKg = session.bodyWeightKgSnapshot ?: latestBody?.weightKg,
+            heightCm = latestBody?.heightCm,
+            age = userSettings.age,
+            bodyFatPercent = latestBody?.bodyFatPercent,
+            skeletalMuscleKg = latestBody?.muscleMassKg,
         )
     }
 
@@ -503,6 +633,24 @@ class WorkoutSessionManager @Inject constructor(
                     bodyWeightKg = session.bodyWeightKgSnapshot,
                     includeWarmup = nowSettings.includeWarmupInVolume,
                 )
+                // 消耗采用分组累加（方案 A）：只在完成一组时计算该组消耗，
+                // 而不是按整场重复计算——否则短时训练会被整场公式放大成荒谬数字。
+                // 该组时长用"距上次落库的间隔"近似（即本组实际用时），限幅避免异常值。
+                val activeSecondsNow = session.totalDurationSeconds + (session.activeSegmentStartedAt
+                    ?.let { ((now - it) / 1000).toInt().coerceAtLeast(0) } ?: 0)
+                val setDurationSeconds = ((now - session.updatedAt) / 1000).toInt().coerceIn(3, 600)
+                val setReps = (input.reps ?: 0) + (input.leftReps ?: 0) + (input.rightReps ?: 0)
+                val setWork = buildWorkForSingleSet(
+                    exercise = exercise,
+                    definition = exercise.exerciseDefinitionId?.let { exerciseDao.getById(it) },
+                    weightKg = weightKg,
+                    reps = setReps,
+                )
+                val setResult = if (setWork != null) {
+                    AdvancedCalorieEstimator.estimateSet(setWork, buildEstimatorProfile(session), setDurationSeconds)
+                } else {
+                    null
+                }
                 workoutDao.updateSession(
                     session.copy(
                         totalVolumeKg = volume,
@@ -510,6 +658,10 @@ class WorkoutSessionManager @Inject constructor(
                         totalReps = allSets
                             .filter { it.status == SetStatus.COMPLETED.name }
                             .sumOf { (it.reps ?: 0) + (it.leftReps ?: 0) + (it.rightReps ?: 0) },
+                        // 累加该组消耗；UI 实时跳字基于 calorieElapsedBaseSeconds 之后的时间
+                        estimatedCalories = (session.estimatedCalories ?: 0.0) + (setResult?.calories ?: 0.0),
+                        calorieEstimationLevel = (setResult?.level ?: EstimationLevel.L4_WEIGHT_ONLY).name,
+                        calorieElapsedBaseSeconds = activeSecondsNow,
                         updatedAt = now,
                     )
                 )
@@ -1175,6 +1327,16 @@ class WorkoutSessionManager @Inject constructor(
                     val reps = completed.sumOf { (it.reps ?: 0) + (it.leftReps ?: 0) + (it.rightReps ?: 0) }
                     val duration = accumulateDuration(session, now)
                     val status = if (input.completedFully) SessionStatus.COMPLETED else SessionStatus.ABANDONED
+                    // 最终消耗 = 逐组累加值 + EPOC（训练结束后的恢复消耗，一次性追加）。
+                    // 不再整场重算：累加值已经按组算准，整场回归公式在这里只会重复计入。
+                    val work = buildCalorieWork(sessionId, allSets)
+                    val weight = session.bodyWeightKgSnapshot
+                        ?: buildEstimatorProfile(session).weightKg
+                    val calories = (session.estimatedCalories ?: 0.0) +
+                        AdvancedCalorieEstimator.estimateEPOCFor(work, weight ?: 0.0, duration / 60.0)
+                    val level = session.calorieEstimationLevel
+                        ?.let { lvl -> EstimationLevel.entries.firstOrNull { it.name == lvl } }
+                        ?: EstimationLevel.L4_WEIGHT_ONLY
 
                     workoutDao.finalizeSession(
                         sessionId = sessionId,
@@ -1184,6 +1346,8 @@ class WorkoutSessionManager @Inject constructor(
                         volume = volume,
                         sets = completed.size,
                         reps = reps,
+                        calories = calories,
+                        calorieLevel = level.name,
                         now = now,
                     )
 
@@ -1225,6 +1389,8 @@ class WorkoutSessionManager @Inject constructor(
                         totalVolumeKg = volume,
                         totalSets = completed.size,
                         totalReps = reps,
+                        estimatedCalories = calories,
+                        estimationLevel = level,
                         prs = prHits,
                         startedAt = session.startedAt,
                         completedAt = now,
@@ -1256,6 +1422,28 @@ class WorkoutSessionManager @Inject constructor(
                     // 清掉会话内残留的休息计时状态，避免恢复后弹出过期的"休息结束"
                     workoutDao.clearRestTimer(sessionId, time.nowEpochMs())
                     workoutDao.discardSession(sessionId, time.nowEpochMs())
+                }
+            }
+        }
+
+    /**
+     * 设置本次训练使用的体重（自重动作的有效负荷 = 体重 × 系数 + 附加负重）。
+     *
+     * 默认取最近一条身体记录的体重快照；没有记录（或体重刚变化）时，
+     * 用户在训练中直接改，后续组数的消耗与总容量按新体重计算。
+     * 已累计的消耗不回溯重算——那部分是按当时体重算的，回溯只会制造混乱。
+     */
+    suspend fun setSessionBodyWeight(sessionId: Long, weightKg: Double): Outcome<Unit> =
+        runCatchingOutcomeSuspend {
+            writeMutex.withLock {
+                database.withTransaction {
+                    val session = workoutDao.getSession(sessionId) ?: error("会话不存在")
+                    workoutDao.updateSession(
+                        session.copy(
+                            bodyWeightKgSnapshot = weightKg.coerceIn(20.0, 300.0),
+                            updatedAt = time.nowEpochMs(),
+                        )
+                    )
                 }
             }
         }

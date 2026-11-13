@@ -28,6 +28,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
@@ -79,6 +80,7 @@ import com.fitnesspro.core.common.navigation.NavResults
 import com.fitnesspro.core.data.workout.LogSetInput
 import com.fitnesspro.core.data.workout.SummaryInput
 import com.fitnesspro.core.data.workout.WorkoutSessionManager
+import com.fitnesspro.core.domain.calculator.AdvancedCalorieEstimator
 import com.fitnesspro.core.domain.calculator.RepsRange
 import com.fitnesspro.core.domain.calculator.TrainingAdvisor
 import com.fitnesspro.core.designsystem.component.LabelChip
@@ -93,12 +95,15 @@ import com.fitnesspro.core.designsystem.theme.FitnessTheme
 import com.fitnesspro.core.designsystem.theme.LocalFitnessAccent
 import com.fitnesspro.core.designsystem.theme.NumericSize
 import com.fitnesspro.core.designsystem.theme.numericTextStyle
+import com.fitnesspro.core.domain.repository.ExerciseRepository
 import com.fitnesspro.core.domain.repository.SettingsRepository
 import com.fitnesspro.core.designsystem.labelRes
 import com.fitnesspro.core.model.ActiveExercise
+import com.fitnesspro.core.model.Exercise
 import com.fitnesspro.core.model.MuscleGroup
 import com.fitnesspro.core.model.ActiveSet
 import com.fitnesspro.core.model.ActiveWorkout
+import com.fitnesspro.core.mediaui.ExerciseDetailSheet
 import com.fitnesspro.core.mediaui.ExerciseMedia
 import com.fitnesspro.core.mediaui.MEDIA_SIZE_SMALL
 import com.fitnesspro.core.model.MediaRef
@@ -114,6 +119,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.map
@@ -160,6 +166,7 @@ class WorkoutViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val sessionManager: WorkoutSessionManager,
     private val settings: SettingsRepository,
+    private val exerciseRepository: ExerciseRepository,
     private val navResultBus: NavResultBus,
 ) : ViewModel() {
 
@@ -178,6 +185,21 @@ class WorkoutViewModel @Inject constructor(
     )
 
     private val transient = MutableStateFlow(TransientState())
+
+    /** 动作详情弹层：非空时显示（点动作名称打开，看要领/器械/处方默认值） */
+    private val detailExercise = MutableStateFlow<Exercise?>(null)
+    val detailExerciseState: StateFlow<Exercise?> = detailExercise.asStateFlow()
+
+    fun openExerciseDetail(definitionId: Long?) {
+        val id = definitionId ?: return
+        viewModelScope.launch {
+            detailExercise.value = exerciseRepository.getExercise(id)
+        }
+    }
+
+    fun closeExerciseDetail() {
+        detailExercise.value = null
+    }
 
     /**
      * 打开动作选择器之前先记住"为什么打开"：
@@ -239,8 +261,10 @@ class WorkoutViewModel @Inject constructor(
     ): Map<Long, TrainingAdvisor.LoadSuggestion> = workout.exercises
         .mapNotNull { exercise ->
             val range = RepsRange.parse(exercise.sets.firstOrNull()?.targetReps)
-            val base = exercise.sets.firstNotNullOfOrNull { it.targetWeightKg ?: it.weightKg }
-                ?: exercise.lastSessionSets.firstNotNullOfOrNull { it.weightKg }
+            // 基准重量以上次**实际举起的**最大重量为准：处方目标可能低于用户实际水平
+            // （例如处方 5kg、上次实际 6×12 全部达标），按处方算会给出偏低的建议
+            val base = exercise.lastSessionSets.mapNotNull { it.weightKg }.maxOrNull()
+                ?: exercise.sets.firstNotNullOfOrNull { it.targetWeightKg ?: it.weightKg }
             if (range.isEmpty || base == null || exercise.lastSessionSets.isEmpty()) {
                 return@mapNotNull null
             }
@@ -368,6 +392,11 @@ class WorkoutViewModel @Inject constructor(
         launchLogged { sessionManager.deleteLastPendingSet(exerciseId) }
     }
 
+    /** 设置本次训练使用的体重：自重动作的有效负荷与消耗即时按新体重计算 */
+    fun onSetBodyWeight(weightKg: Double) {
+        launchLogged { sessionManager.setSessionBodyWeight(sessionId, weightKg) }
+    }
+
     fun onPauseToggle() {
         launchLogged {
             val workout = uiState.value.workout ?: return@launchLogged Outcome.Success(Unit)
@@ -458,6 +487,7 @@ fun WorkoutScreen(
     var elapsedSeconds by remember { mutableStateOf(0) }
     var restRemainingMs by remember { mutableStateOf(0L) }
     var showExitDialog by remember { mutableStateOf(false) }
+    var showBodyWeightDialog by remember { mutableStateOf(false) }
     val snackbarHostState = remember { SnackbarHostState() }
     // 完成一个动作的祝贺文案（在组合里取好，LaunchedEffect 里不能用 stringResource）
     val completedToast = stringResource(R.string.workout_exercise_done)
@@ -557,7 +587,10 @@ fun WorkoutScreen(
             val previous = lastCurrentId
             if (previous != null && previous != currentExerciseId) {
                 expandedIds[previous] = false
-                snackbarHostState.showSnackbar(completedToast)
+                // showSnackbar 会挂起直到提示条自动消失（约 4 秒）——直接 await 会把
+                // 下面的自动滚动一起拖住，用户看到的就是"完成动作后不自动跳到下一个"。
+                // 祝贺提示与滚动必须并行。
+                launch { snackbarHostState.showSnackbar(completedToast) }
             }
             lastCurrentId = currentExerciseId
 
@@ -655,6 +688,11 @@ fun WorkoutScreen(
                                     viewModel.onBeginReplace(exercise.id)
                                     onOpenExercisePicker()
                                 },
+                                onOpenDetail = {
+                                    viewModel.openExerciseDetail(exercise.exercise.definitionId)
+                                },
+                                onSetBodyWeight = { showBodyWeightDialog = true },
+                                bodyWeightKg = workout.bodyWeightKg,
                             )
                         }
                     }
@@ -741,6 +779,26 @@ fun WorkoutScreen(
             },
         )
     }
+
+    if (showBodyWeightDialog) {
+        WorkoutBodyWeightDialog(
+            initialKg = workout?.bodyWeightKg,
+            unit = state.settings.weightUnit,
+            onConfirm = { kg ->
+                showBodyWeightDialog = false
+                viewModel.onSetBodyWeight(kg)
+            },
+            onDismiss = { showBodyWeightDialog = false },
+        )
+    }
+
+    // 动作详情弹层：点动作名称打开，训练间隙查要领不用离开训练页
+    val detailExercise by viewModel.detailExerciseState.collectAsStateWithLifecycle()
+    ExerciseDetailSheet(
+        exercise = detailExercise,
+        onDismiss = viewModel::closeExerciseDetail,
+        onPlayMedia = onPlayMedia,
+    )
 }
 
 /**
@@ -773,6 +831,50 @@ private fun WorkoutExitDialog(
         dismissButton = {
             TextButton(onClick = onCancel) {
                 Text(stringResource(R.string.workout_exit_cancel))
+            }
+        },
+    )
+}
+
+/**
+ * 本次训练体重：自重动作（引体、双杠臂屈伸等）的有效负荷 = 体重 × 标定系数 + 附加负重。
+ * 这里录入的体重只作用于当前会话，不改动身体页的长期记录。
+ */
+@Composable
+private fun WorkoutBodyWeightDialog(
+    initialKg: Double?,
+    unit: WeightUnit,
+    onConfirm: (Double) -> Unit,
+    onDismiss: () -> Unit,
+) {
+    var text by remember {
+        mutableStateOf(initialKg?.let { formatWeightCompact(UnitConversion.fromKg(it, unit)) } ?: "")
+    }
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(stringResource(R.string.workout_set_bodyweight_title)) },
+        text = {
+            androidx.compose.material3.OutlinedTextField(
+                value = text,
+                onValueChange = { raw -> text = raw.filter { it.isDigit() || it == '.' }.take(6) },
+                label = { Text(stringResource(R.string.workout_set_bodyweight_label)) },
+                singleLine = true,
+                textStyle = numericTextStyle(NumericSize.Small),
+            )
+        },
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    text.toDoubleOrNull()?.let { onConfirm(UnitConversion.toKg(it, unit)) }
+                },
+                enabled = text.toDoubleOrNull() != null,
+            ) {
+                Text(stringResource(DesignSystemR.string.common_confirm))
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text(stringResource(DesignSystemR.string.common_cancel))
             }
         },
     )
@@ -859,6 +961,26 @@ private fun estimateElapsed(workout: ActiveWorkout): Int {
     return if (workout.isPaused) base - workout.pausedTotalSeconds else base
 }
 
+/**
+ * 实时消耗显示（分组计算方案 A）：
+ * 已完成组的消耗累加值 + 当前进行中组的 MET 跳字。
+ * 跳字只用 MET × 体重 × 时长，不涉及总容量——当前组的"进行中"时长
+ * 不该被整场公式的 TV 项放大（此前 3 组 50×10 显示上千 kcal 就是这个原因）。
+ */
+private fun displayCalories(workout: ActiveWorkout, elapsedSeconds: Int): Double {
+    val accrued = workout.estimatedCalories ?: 0.0
+    val tickSeconds = workout.caloriesAccruedAtSeconds
+        ?.let { (elapsedSeconds - it).coerceIn(0, 7200) }
+        ?: 0
+    return accrued + AdvancedCalorieEstimator.estimateTicking(
+        // 训练快照未携带动作 MET 标定，跳字阶段用抗阻默认强度；
+        // 该部分每组完成时会被精确的单组消耗覆盖
+        metValue = null,
+        weightKg = workout.bodyWeightKg,
+        elapsedSeconds = tickSeconds,
+    )
+}
+
 @Composable
 private fun WorkoutHeader(elapsedSeconds: Int, workout: ActiveWorkout, isPaused: Boolean) {
     // 同动作卡：概览区必须不透明，否则半透明底 + 壁纸会让数字对比度崩掉
@@ -875,6 +997,13 @@ private fun WorkoutHeader(elapsedSeconds: Int, workout: ActiveWorkout, isPaused:
                 MetricColumn(
                     label = stringResource(R.string.workout_volume),
                     value = formatVolume(workout.totalVolumeKg),
+                )
+                MetricColumn(
+                    label = stringResource(R.string.workout_calories),
+                    value = stringResource(
+                        R.string.workout_calories_value,
+                        displayCalories(workout, elapsedSeconds).toInt(),
+                    ),
                 )
                 MetricColumn(
                     label = stringResource(R.string.workout_title),
@@ -933,7 +1062,10 @@ private fun ExerciseWorkoutCard(
     onAddSet: () -> Unit,
     onDeleteLastSet: () -> Unit,
     onReplaceExercise: () -> Unit,
+    onOpenDetail: () -> Unit = {},
     onPlayMedia: (MediaRef) -> Unit = {},
+    onSetBodyWeight: () -> Unit = {},
+    bodyWeightKg: Double? = null,
 ) {
     var showMoreActions by remember { mutableStateOf(false) }
     val nextSet = exercise.sets.firstOrNull { it.status == SetStatus.PENDING }
@@ -958,12 +1090,13 @@ private fun ExerciseWorkoutCard(
             )
         }
 
-    // 输入框初始值回退链：本组目标（计划/上次成绩预填）→ 本动作上一完成组（第一次设置后，
-    // 后续组自动沿用，除非用户自己改）→ 上次训练该动作的最后一组 → 空
+    // 输入框初始值回退链：本动作上一完成组的**实际成绩**优先（连续做同一动作时，
+    // 下一组通常沿用刚才的重量/次数，而不是跳回处方目标）→ 本组目标（计划/上次成绩预填，
+    // 仅在该动作还没有任何实际成绩时生效）→ 上次训练该动作的最后一组 → 空
     var weightInput by remember(nextSet?.id) {
         mutableStateOf(
-            nextSet?.targetWeightKg?.let { formatWeightCompact(UnitConversion.fromKg(it, unit)) }
-                ?: lastSettledSet?.weightKg?.let { formatWeightCompact(UnitConversion.fromKg(it, unit)) }
+            lastSettledSet?.weightKg?.let { formatWeightCompact(UnitConversion.fromKg(it, unit)) }
+                ?: nextSet?.targetWeightKg?.let { formatWeightCompact(UnitConversion.fromKg(it, unit)) }
                 ?: exercise.lastSessionSets.lastOrNull()?.weightKg
                     ?.let { formatWeightCompact(UnitConversion.fromKg(it, unit)) }
                 ?: ""
@@ -971,14 +1104,25 @@ private fun ExerciseWorkoutCard(
     }
     var repsInput by remember(nextSet?.id) {
         mutableStateOf(
-            nextSet?.targetReps?.takeWhile { it.isDigit() }
-                ?: lastSettledSet?.reps?.toString()
+            lastSettledSet?.reps?.toString()
+                ?: nextSet?.targetReps?.takeWhile { it.isDigit() }
                 ?: exercise.lastSessionSets.lastOrNull()?.reps?.toString()
                 ?: ""
         )
     }
-    var durationInput by remember(nextSet?.id) { mutableStateOf("") }
-    var distanceInput by remember(nextSet?.id) { mutableStateOf("") }
+    // 时长/距离同样沿用"上一完成组实际值 → 本组目标"的优先级，有氧类动作不用每组重输
+    var durationInput by remember(nextSet?.id) {
+        mutableStateOf(
+            (lastSettledSet?.durationSeconds ?: nextSet?.targetDurationSeconds)?.toString() ?: "",
+        )
+    }
+    var distanceInput by remember(nextSet?.id) {
+        mutableStateOf(
+            // 距离内部统一存米，输入框显示同一数值（与 onCompleteSet 的 toDoubleOrNull 对应）；
+            // formatWeightCompact 本质是紧凑数字格式化，米数同样适用
+            lastSettledSet?.distanceMeters?.let { formatWeightCompact(it) } ?: "",
+        )
+    }
     var leftInput by remember(nextSet?.id) { mutableStateOf("") }
     var rightInput by remember(nextSet?.id) { mutableStateOf("") }
     var rpeInput by remember(nextSet?.id) { mutableStateOf("") }
@@ -1009,6 +1153,8 @@ private fun ExerciseWorkoutCard(
                         style = MaterialTheme.typography.titleMedium,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
+                        // 点动作名称查看动作详情（要领/器械/处方默认值），不与整行的展开手势冲突
+                        modifier = Modifier.clickable(onClick = onOpenDetail),
                     )
                     Spacer(Modifier.height(FitnessTheme.spacing.xs))
                     if (expanded) {
@@ -1037,16 +1183,36 @@ private fun ExerciseWorkoutCard(
                             overflow = TextOverflow.Ellipsis,
                         )
                     } else {
-                        // 折叠态只留进度，信息足够判断"这个动作还要不要做"
-                        Text(
-                            stringResource(
-                                R.string.workout_progress,
-                                exercise.sets.count { it.status == SetStatus.COMPLETED },
-                                exercise.sets.size,
-                            ),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
+                        val doneCount = exercise.sets.count { it.status == SetStatus.COMPLETED }
+                        if (exercise.sets.isNotEmpty() && doneCount == exercise.sets.size) {
+                            // 全部组数完成：给出明确的"做完了"视觉信号，
+                            // 折叠后扫一眼就能认出哪些动作已完成目标
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Icon(
+                                    imageVector = Icons.Filled.CheckCircle,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.primary,
+                                    modifier = Modifier.size(14.dp),
+                                )
+                                Spacer(Modifier.width(FitnessTheme.spacing.xs))
+                                Text(
+                                    stringResource(R.string.workout_exercise_done_badge),
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.primary,
+                                )
+                            }
+                        } else {
+                            // 折叠态只留进度，信息足够判断"这个动作还要不要做"
+                            Text(
+                                stringResource(
+                                    R.string.workout_progress,
+                                    doneCount,
+                                    exercise.sets.size,
+                                ),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
                     }
                 }
                 LabelChip(
@@ -1093,7 +1259,12 @@ private fun ExerciseWorkoutCard(
                         NumberField(
                             value = weightInput,
                             onValueChange = { weightInput = it },
-                            label = stringResource(R.string.workout_weight_label),
+                            // 自重动作填的是"附加负重"（负重引体的杠铃片等），
+                            // 体重部分按动作标定系数自动折算，见下方提示
+                            label = stringResource(
+                                if (exercise.exercise.isBodyweight) R.string.workout_weight_added_label
+                                else R.string.workout_weight_label,
+                            ),
                             modifier = Modifier.weight(1f),
                         )
                     }
@@ -1121,6 +1292,31 @@ private fun ExerciseWorkoutCard(
                             modifier = Modifier.weight(1f),
                         )
                     }
+                }
+
+                // 自重动作的有效负荷提示：体重 × 标定系数 + 附加负重，
+                // 让"引体填 0 还是填配重"不再有歧义，随输入实时更新
+                if (exercise.exercise.isBodyweight) {
+                    Spacer(Modifier.height(FitnessTheme.spacing.xs))
+                    val addedKg = weightInput.toDoubleOrNull()?.let { UnitConversion.toKg(it, unit) }
+                    val hintText = if (bodyWeightKg != null) {
+                        val effectiveLoad = bodyWeightKg * exercise.exercise.selfWeightCoefficient +
+                            (addedKg ?: 0.0)
+                        stringResource(
+                            R.string.workout_bodyweight_load_hint,
+                            formatWeightCompact(UnitConversion.fromKg(effectiveLoad, unit)),
+                            formatWeightCompact(UnitConversion.fromKg(bodyWeightKg, unit)),
+                            formatWeightCompact(exercise.exercise.selfWeightCoefficient),
+                            formatWeightCompact(UnitConversion.fromKg(addedKg ?: 0.0, unit)),
+                        )
+                    } else {
+                        stringResource(R.string.workout_bodyweight_need_weight)
+                    }
+                    Text(
+                        hintText,
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
                 }
 
                 if (exercise.exercise.isUnilateral) {
@@ -1186,6 +1382,15 @@ private fun ExerciseWorkoutCard(
                         onClick = {
                             showMoreActions = false
                             onAddSet()
+                        },
+                    )
+                    // 本次体重：自重动作的有效负荷与消耗都依赖它，
+                    // 没录过体重或体重刚变化时不用中断训练跑去身体页
+                    DropdownMenuItem(
+                        text = { Text(stringResource(R.string.workout_set_bodyweight)) },
+                        onClick = {
+                            showMoreActions = false
+                            onSetBodyWeight()
                         },
                     )
                     // 复制一组：把刚才那组的实际数值带进来，训练中最高频的操作之一

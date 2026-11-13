@@ -28,6 +28,10 @@ import com.fitnesspro.core.model.BodyMeasurement
 import com.fitnesspro.core.model.DataSource
 import com.fitnesspro.core.model.Equipment
 import com.fitnesspro.core.model.Exercise
+import com.fitnesspro.core.model.IntensityZone
+import com.fitnesspro.core.model.MetabolicType
+import com.fitnesspro.core.model.MovementPattern
+import com.fitnesspro.core.model.MuscleVolumeTier
 import com.fitnesspro.core.model.ExerciseSnapshot
 import com.fitnesspro.core.model.ExerciseStatus
 import com.fitnesspro.core.model.ExerciseTaxonomy
@@ -99,6 +103,20 @@ fun ExerciseDefinitionEntity.toDomain(
         defaultSets = defaultSets,
         defaultReps = defaultReps,
         instructions = instructions,
+        // 能耗维度：未知枚举名（脏数据/降级）回落默认值，保证估算永不崩溃
+        metValue = metValue,
+        isBodyweight = isBodyweight,
+        selfWeightCoefficient = selfWeightCoefficient,
+        equipmentEfficiency = equipmentEfficiency,
+        isCompound = isCompound,
+        tempoFactor = tempoFactor,
+        intensityZone = intensityZone.toEnum(IntensityZone.HYPERTROPHY),
+        movementPattern = movementPattern.toEnum(MovementPattern.OTHER),
+        metabolicType = metabolicType.toEnum(MetabolicType.MIXED),
+        averageRepDurationSeconds = averageRepDurationSeconds,
+        primaryMuscleVolume = primaryMuscleVolume.toEnum(MuscleVolumeTier.LARGE),
+        isBeginnerFriendly = isBeginnerFriendly,
+        isWarmupSuitable = isWarmupSuitable,
         media = MediaRef.localOrNull(mediaType, mediaPath, thumbnailPath),
         colorKey = colorKey,
         isCustom = isCustom,
